@@ -16,8 +16,6 @@ export function FromTheWaterSection({ limit = 6, showViewAll = true }: FromTheWa
 
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
   const [isReviewOpen, setIsReviewOpen] = useState(false);
-  const [activeFilter, setActiveFilter] = useState<string>('All');
-
   const categories: (string | StoryType)[] = [
     'All',
     'My First Boat',
@@ -28,12 +26,27 @@ export function FromTheWaterSection({ limit = 6, showViewAll = true }: FromTheWa
     'A Family Boating Tradition',
   ];
 
+  const [activeFilter, setActiveFilter] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const categoryParam = params.get('category') || params.get('type');
+      if (categoryParam && categories.includes(categoryParam as any)) {
+        return categoryParam;
+      }
+    }
+    return 'All';
+  });
+
   const filteredStories = publishedStories.filter((item) => {
     if (activeFilter === 'All') return true;
     return item.storyType === activeFilter;
   });
 
-  const displayedStories = limit ? filteredStories.slice(0, limit) : filteredStories;
+  // On the home page (where limit is passed), keep 2 on 'All', but show all stories when viewing a category
+  const displayedStories =
+    limit && activeFilter === 'All'
+      ? filteredStories.slice(0, limit)
+      : filteredStories;
 
   return (
     <section id="from-the-water" className="mx-auto max-w-[1320px] px-5 py-20 lg:px-10 lg:py-28">
@@ -101,7 +114,7 @@ export function FromTheWaterSection({ limit = 6, showViewAll = true }: FromTheWa
       </div>
 
       {/* Featured Community Stories Grid */}
-      <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={`mt-8 grid gap-6 sm:grid-cols-2 ${displayedStories.length === 2 ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}>
         {displayedStories.map((story) => (
           <article
             key={story.id}
@@ -120,15 +133,30 @@ export function FromTheWaterSection({ limit = 6, showViewAll = true }: FromTheWa
                     e.currentTarget.style.display = 'none';
                   }}
                 />
-                <div className="absolute left-4 top-4">
-                  <span className="rounded-full bg-black/60 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-sm">
+                <div className="absolute left-4 top-4 z-10">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setActiveFilter(story.storyType);
+                    }}
+                    className="rounded-full bg-black/70 px-3 py-1 text-[11px] font-bold text-white backdrop-blur-sm transition hover:bg-[hsl(var(--accent))]"
+                    title={`View all stories in category: ${story.storyType}`}
+                  >
                     {story.storyType}
-                  </span>
+                  </button>
                 </div>
               </div>
             ) : (
               <div className="flex h-36 items-center justify-between border-b border-[hsl(var(--border))] bg-[hsl(var(--muted))]/30 px-6">
-                <span className="fine-label text-[hsl(var(--accent))]">{story.storyType}</span>
+                <button
+                  type="button"
+                  onClick={() => setActiveFilter(story.storyType)}
+                  className="fine-label text-left text-[hsl(var(--accent))] hover:underline"
+                >
+                  {story.storyType}
+                </button>
                 <Sparkles size={16} className="text-[hsl(var(--accent))]" />
               </div>
             )}
@@ -137,7 +165,13 @@ export function FromTheWaterSection({ limit = 6, showViewAll = true }: FromTheWa
             <div className="flex flex-1 flex-col justify-between p-6 sm:p-7">
               <div>
                 {!story.featuredImage && (
-                  <span className="fine-label block text-[hsl(var(--accent))]">{story.storyType}</span>
+                  <button
+                    type="button"
+                    onClick={() => setActiveFilter(story.storyType)}
+                    className="fine-label block text-left text-[hsl(var(--accent))] hover:underline"
+                  >
+                    {story.storyType}
+                  </button>
                 )}
                 <h3 className="display-font mt-2 text-2xl leading-[1.08] text-[hsl(var(--primary))] group-hover:text-[hsl(var(--accent))] transition">
                   {story.title}
@@ -177,6 +211,37 @@ export function FromTheWaterSection({ limit = 6, showViewAll = true }: FromTheWa
           </article>
         ))}
       </div>
+
+      {/* When 2 are shown on home under "All", note that others can be seen by category or in Community */}
+      {limit && activeFilter === 'All' && publishedStories.length > limit && (
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--card))]/70 px-5 py-3.5 text-xs text-[hsl(var(--muted-foreground))]">
+          <span>
+            Showing <strong>{displayedStories.length}</strong> featured stories on home page. Select any category above to see the others, or browse all in Community.
+          </span>
+          <Link
+            href="/community"
+            className="inline-flex items-center gap-1.5 font-bold text-[hsl(var(--accent))] transition hover:underline"
+          >
+            Explore all {publishedStories.length} stories <ArrowRight size={13} />
+          </Link>
+        </div>
+      )}
+
+      {/* If viewing a filtered category on the home page, offer quick reset to All */}
+      {limit && activeFilter !== 'All' && (
+        <div className="mt-6 flex items-center justify-between rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-5 py-3 text-xs">
+          <span className="text-[hsl(var(--muted-foreground))]">
+            Showing all stories in category: <strong className="text-[hsl(var(--primary))]">{activeFilter}</strong> ({displayedStories.length})
+          </span>
+          <button
+            type="button"
+            onClick={() => setActiveFilter('All')}
+            className="font-bold text-[hsl(var(--accent))] transition hover:underline"
+          >
+            ← Back to Featured (2)
+          </button>
+        </div>
+      )}
 
       {displayedStories.length === 0 && (
         <div className="mt-12 rounded-2xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--muted))]/30 p-12 text-center">

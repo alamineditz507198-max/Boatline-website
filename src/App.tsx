@@ -26,6 +26,7 @@ import {
   Fish,
   Instagram,
   Linkedin,
+  Loader2,
   MapPin,
   Menu,
   RefreshCw,
@@ -44,6 +45,7 @@ import { FromTheWaterSection } from '@/components/FromTheWaterSection';
 import { CommunityPage } from '@/components/CommunityPage';
 import { CommunityStoryDetailPage } from '@/components/CommunityStoryDetailPage';
 import { UsedBoatBuyingGuideArticle } from '@/components/UsedBoatBuyingGuideArticle';
+import { MarketplaceApp } from '@/marketplace/MarketplaceApp';
 
 const queryClient = new QueryClient();
 
@@ -141,7 +143,7 @@ function Header({ onSearch, solid = false, compact = false }: { onSearch: () => 
   return (
     <header className={`${solid ? 'relative bg-[#080b0d]' : 'absolute left-0 right-0 top-0 bg-[#080b0d]/85 backdrop-blur-sm'} z-30 text-white`}>
       <div className={`relative mx-auto flex ${compact ? 'h-[68px] lg:h-[70px]' : 'h-[76px]'} max-w-[1320px] items-center justify-between px-5 lg:px-10`}>
-        <button data-testid="button-menu" onClick={() => setOpen(!open)} className="rounded-full border border-white/20 p-3 transition hover:border-[hsl(var(--accent))] hover:bg-white/10 xl:hidden" aria-label={open ? 'Close sections menu' : 'Open sections menu'} aria-expanded={open}>
+        <button data-testid="button-menu" onClick={() => setOpen(!open)} className="rounded-full border border-white/20 p-2.5 transition hover:border-[hsl(var(--accent))] hover:bg-white/10" aria-label={open ? 'Close sections menu' : 'Open sections menu'} aria-expanded={open}>
           {open ? <X size={18} /> : <Menu size={19} />}
         </button>
         <nav aria-label="Primary navigation" className="hidden min-w-0 flex-1 items-center gap-2.5 pr-4 xl:flex">
@@ -179,6 +181,29 @@ function Header({ onSearch, solid = false, compact = false }: { onSearch: () => 
                 {primaryNavRight.map(({ label, id, path, featured }) => (
                   <Link data-testid={`link-mobile-${id}`} href={path} key={id} className={`border-b border-white/10 py-3 text-left text-xs uppercase tracking-[.13em] transition hover:text-[hsl(var(--accent))] ${featured ? 'font-bold text-white' : isCurrent(path) ? 'text-[hsl(var(--accent))]' : 'text-white/80'}`} onClick={() => setOpen(false)}>{label}</Link>
                 ))}
+              </div>
+            </div>
+            <div className="sm:col-span-2 border-t border-white/15 pt-5 mt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl bg-gradient-to-r from-[#0d2238] to-[#0a1628] p-4 border border-[hsl(var(--accent))]/30 shadow-lg">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="rounded bg-amber-400 px-2 py-0.5 text-[9px] font-extrabold uppercase text-[#0a1628]">Coming Soon</span>
+                    <span className="text-xs font-extrabold tracking-wider uppercase text-white">Lyman Marine Marketplace</span>
+                  </div>
+                  <p className="mt-1 text-xs text-white/70">
+                    Curated boat marketplace, certified marine dealers, and boat valuation tools launching soon.
+                  </p>
+                </div>
+                <Link
+                  data-testid="link-menu-marketplace"
+                  href="/marketplace"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-[hsl(var(--accent))] px-5 py-2.5 text-xs font-bold uppercase tracking-[.14em] text-[#0a1628] hover:brightness-110 transition shrink-0"
+                  onClick={() => setOpen(false)}
+                >
+                  <ShipWheel size={15} />
+                  <span>MARKETPLACE</span>
+                  <ArrowRight size={14} />
+                </Link>
               </div>
             </div>
           </div>
@@ -825,14 +850,29 @@ function GearGuide() {
         <SectionIntro eyebrow="Gear reviews" title="Marine gear and electronics reviews." copy="We compare the equipment that makes boating safer, easier, and more enjoyable." />
         <div className="horizontal-snap -mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 md:mx-0 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0">
           {[
-            ['Best all-around VHF', 'Standard Horizon GX1400G', '$219', 'Clear, compact, and dependable when weather changes.', 'editor’s pick'],
-            ['Best chartplotter upgrade', 'Garmin GPSMAP 943xsv', '$1,199', 'Big enough to see from the helm. Intuitive enough to trust.', 'best for most boats'],
-            ['Best deck essential', 'YETI Hopper M20', '$325', 'A soft cooler that stays put when the wake gets lively.', 'tested & loved'],
-          ].map(([label, name, price, copy, badge], index) => <article data-testid={`card-product-${index}`} key={name} className="relative min-w-[84vw] snap-start rounded-2xl border border-[hsl(var(--card-border))] bg-[hsl(var(--card))] p-4 shadow-[var(--shadow-soft)] transition hover:-translate-y-1 hover:shadow-[var(--shadow-lift)] md:min-w-0 md:p-5">
+            ['Marine Electronics', 'Detailed reviews, field tests, and equipment notes will be published soon.', 'coming soon'],
+            ['Navigation & Helm', 'Detailed reviews, field tests, and equipment notes will be published soon.', 'coming soon'],
+            ['Deck Essentials', 'Detailed reviews, field tests, and equipment notes will be published soon.', 'coming soon'],
+          ].map(([label, copy, badge], index) => <article data-testid={`card-product-${index}`} key={`gear-card-${index}`} className="relative min-w-[84vw] snap-start rounded-2xl border border-[hsl(var(--card-border))] bg-[hsl(var(--card))] p-4 shadow-[var(--shadow-soft)] transition hover:-translate-y-1 hover:shadow-[var(--shadow-lift)] md:min-w-0 md:p-5">
             <div className="flex items-center justify-between"><span className="fine-label text-[hsl(var(--accent))]">{label}</span><Star size={16} className="text-[hsl(var(--accent))]" fill="currentColor" /></div>
-            <div className="my-5 flex h-16 items-center justify-center md:my-9 md:h-24"><div className="relative flex h-14 w-28 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] md:h-20 md:w-36"><Sparkles size={21} className="text-[hsl(var(--primary))]" /><span className="absolute -right-2 -top-2 rounded bg-[hsl(var(--accent))] px-1.5 py-1 text-[9px] font-bold uppercase text-white">{badge}</span></div></div>
-            <h3 className="display-font text-xl leading-none md:text-2xl">{name}</h3><p className="mt-2 text-xs leading-relaxed text-[hsl(var(--muted-foreground))] md:mt-3 md:text-sm">{copy}</p>
-             <div className="mt-4 flex items-center justify-between border-t border-[hsl(var(--border))] pt-3 md:mt-5 md:pt-4"><span className="font-mono text-sm">{price}</span><Link data-testid={`button-view-product-${index}`} href="/gear" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))] hover:text-[hsl(var(--accent))]">See the notes <ArrowRight size={13} /></Link></div>
+            <div className="my-5 flex flex-col items-center justify-center gap-2 md:my-8">
+              <div className="relative flex h-14 w-28 items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--secondary))] md:h-18 md:w-36">
+                <Sparkles size={21} className="text-[hsl(var(--primary))]" />
+                <span className="absolute -right-2 -top-2 rounded bg-[hsl(var(--accent))] px-1.5 py-1 text-[9px] font-bold uppercase text-white">{badge}</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-50 px-3 py-1 text-[11px] font-bold tracking-wide text-amber-900 shadow-2xs">
+                <Loader2 size={11} className="animate-spin text-amber-600" />
+                <span className="uppercase font-mono text-[10px] tracking-wider">Coming Soon</span>
+              </div>
+            </div>
+            <h3 className="display-font text-xl leading-none md:text-2xl text-[hsl(var(--primary))]">Coming Soon</h3>
+            <p className="mt-2 text-xs leading-relaxed text-[hsl(var(--muted-foreground))] md:mt-3 md:text-sm">{copy}</p>
+             <div className="mt-4 flex items-center justify-between border-t border-[hsl(var(--border))] pt-3 md:mt-5 md:pt-4">
+               <div className="flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))]">
+                 <Loader2 size={13} className="animate-spin text-[hsl(var(--accent))]" />
+               </div>
+               <Link data-testid={`button-view-product-${index}`} href="/gear" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[hsl(var(--primary))] hover:text-[hsl(var(--accent))]">See gear <ArrowRight size={13} /></Link>
+             </div>
           </article>)}
         </div>
         <div className="mt-4 flex items-center justify-between rounded-xl border border-dashed border-[hsl(var(--border))] px-5 py-4 text-xs text-[hsl(var(--muted-foreground))]"><span>Our gear desk is reader-supported. When you buy through a link, we may earn a commission.</span><span className="hidden font-mono md:inline">LM / PICKS / 24</span></div>
@@ -995,7 +1035,7 @@ function Home() {
         <MagazineMosaic />
         <GearGuide />
         <ReviewShelf />
-        <FromTheWaterSection limit={6} showViewAll={true} />
+        <FromTheWaterSection limit={2} showViewAll={true} />
         <Dispatches />
         <Newsletter />
       </main>
@@ -1853,6 +1893,8 @@ function Router() {
   return (
     <RoutedErrorBoundary>
       <Switch>
+        <Route path="/marketplace/:rest*" component={MarketplaceApp} />
+        <Route path="/marketplace" component={MarketplaceApp} />
         <Route path="/" component={Home} />
         <Route path="/buying" component={BuyingPage} />
         <Route path="/conditions" component={MarineConditionsPage} />
