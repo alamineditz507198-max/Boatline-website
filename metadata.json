@@ -1,0 +1,6 @@
+{
+  "name": "Lyman Marine",
+  "description": "A premium boating editorial and community website with live NOAA and NWS marine conditions for boat owners, fishing enthusiasts, and yacht lovers.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
