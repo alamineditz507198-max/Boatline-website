@@ -36,6 +36,67 @@ interface UsedBoatBuyingGuideArticleProps {
   };
 }
 
+// Helper for floated/inline images in used boat guide
+function GuideInlineImage({
+  src,
+  alt,
+  caption,
+  align = 'right',
+  size = 'small',
+}: {
+  src: string;
+  alt: string;
+  caption?: string;
+  align?: 'left' | 'right' | 'wide';
+  size?: 'small' | 'wide';
+}) {
+  if (size === 'wide' || align === 'wide') {
+    return (
+      <figure className="my-6 overflow-hidden rounded-2xl border border-[hsl(var(--card-border))] bg-[hsl(var(--card))] p-2.5 shadow-[var(--shadow-soft)]">
+        <div className="overflow-hidden rounded-xl bg-[hsl(var(--muted))]">
+          <img
+            src={src}
+            alt={alt}
+            className="h-56 sm:h-72 md:h-84 w-full object-cover transition duration-300 hover:scale-[1.01]"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/boats/deck-boat.jpg';
+            }}
+          />
+        </div>
+        {caption && (
+          <figcaption className="mt-2.5 px-1 text-xs leading-normal text-[hsl(var(--muted-foreground))]">
+            {caption}
+          </figcaption>
+        )}
+      </figure>
+    );
+  }
+
+  return (
+    <figure
+      className={`my-5 w-full sm:w-[280px] md:w-[320px] rounded-2xl border border-[hsl(var(--card-border))] bg-[hsl(var(--card))] p-2.5 shadow-[var(--shadow-soft)] transition duration-200 hover:shadow-md ${
+        align === 'left' ? 'sm:float-left sm:mr-6 sm:mb-4' : 'sm:float-right sm:ml-6 sm:mb-4'
+      }`}
+    >
+      <div className="overflow-hidden rounded-xl bg-[hsl(var(--muted))]">
+        <img
+          src={src}
+          alt={alt}
+          className="h-40 sm:h-48 w-full object-cover transition duration-300 hover:scale-[1.02]"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/boats/deck-boat.jpg';
+          }}
+        />
+      </div>
+      {caption && (
+        <figcaption className="mt-2 px-1 text-xs leading-normal text-[hsl(var(--muted-foreground))]">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
 export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArticleProps) {
   useEffect(() => {
     document.title = `${article.title} — Used Boat Buying Checklist & Guide | Lyman Marine`;
@@ -305,29 +366,28 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
 
         {/* SECTION 2 */}
         <section id="check-2" className="mt-14 scroll-mt-20 border-t border-[hsl(var(--border))] pt-10">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(var(--primary))] font-mono text-xs font-bold text-[hsl(var(--accent))]">
-                  02
-                </span>
-                <span className="fine-label text-[hsl(var(--accent))]">Mechanical Health</span>
-              </div>
-              <h2 className="display-font mt-2 text-3xl text-[hsl(var(--primary))] sm:text-4xl">
-                Engine Condition
-              </h2>
-            </div>
-            <img
-              src="/boat-engine.png"
-              alt="Boat engine"
-              className="h-20 w-auto shrink-0 object-contain sm:h-28 md:h-32"
-            />
+          <div className="flex items-center gap-3">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(var(--primary))] font-mono text-xs font-bold text-[hsl(var(--accent))]">
+              02
+            </span>
+            <span className="fine-label text-[hsl(var(--accent))]">Mechanical Health</span>
           </div>
+          <h2 className="display-font mt-2 text-3xl text-[hsl(var(--primary))] sm:text-4xl">
+            Engine Condition
+          </h2>
 
           <div className="mt-5 space-y-4 text-sm leading-relaxed text-[hsl(var(--muted-foreground))] sm:text-base">
-            <p>
-              The powerplant is almost always the single most expensive component on a motorboat. Replacing an outboard or sterndrive engine often exceeds the resale value of the hull.
-            </p>
+            <div className="overflow-hidden">
+              <GuideInlineImage
+                src="/used-boat-guide/engine-inspection.jpg"
+                alt="Detailed inspection of a boat outboard engine block and mechanical components"
+                caption="Engine block inspection: Pulling the cowling reveals whether the powerhead has been maintained or neglected with corroded wires and oil leaks."
+                align="right"
+              />
+              <p>
+                The powerplant is almost always the single most expensive component on a motorboat. Replacing an outboard or sterndrive engine often exceeds the resale value of the hull. Because mechanical issues can be easily disguised when the engine is pre-warmed, approaching the engine inspection methodically is your best defense against an immediate repower bill.
+              </p>
+            </div>
             <p>
               <strong>The Cold Start Rule:</strong> Always request that the engine be completely cold when you arrive. Place your hand on the engine block or outboard cowling before turning the key. Warm engines hide starting difficulty, worn starters, weak fuel pumps, and choke issues. A healthy modern marine engine should catch cleanly and settle into a smooth idle within seconds.
             </p>
@@ -445,9 +505,17 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
             Hull & Structural Integrity
           </h2>
           <div className="mt-4 space-y-4 text-sm leading-relaxed text-[hsl(var(--muted-foreground))] sm:text-base">
-            <p>
-              Cosmetic flaws are easily fixed; structural rot can condemn a boat to the salvage yard. The three critical structural components to inspect are the <strong>transom</strong>, the <strong>stringers</strong>, and the <strong>deck/bulkheads</strong>.
-            </p>
+            <div className="overflow-hidden">
+              <GuideInlineImage
+                src="/used-boat-guide/transom-hull-inspection.jpg"
+                alt="Boat hull and transom being inspected on land on a trailer"
+                caption="Transom and structural inspection: Inspecting the hull and engine mounting points out of the water lets you check for core moisture, stress cracks, and flex."
+                align="left"
+              />
+              <p>
+                Cosmetic flaws are easily fixed; structural rot can condemn a boat to the salvage yard. The three critical structural components to inspect are the <strong>transom</strong>, the <strong>stringers</strong>, and the <strong>deck/bulkheads</strong>. Water penetrates through unsealed penetrations over years, turning internal plywood or balsa cores to wet mulch while looking deceptively clean from the outside.
+              </p>
+            </div>
             <p>
               <strong>The Transom Flex Test:</strong> For outboard boats, trim the engine up slightly, grasp the skeg or lower gearcase with both hands, and bounce firmly with your body weight. Watch the transom wall around the engine bracket. <em>There should be zero visible flex or movement of the fiberglass skin.</em> If the transom bends or you see brown water weeping from bolt holes, the internal wood core is rotted.
             </p>
@@ -507,9 +575,17 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
             Propeller & Running Gear
           </h2>
           <div className="mt-4 space-y-4 text-sm leading-relaxed text-[hsl(var(--muted-foreground))] sm:text-base">
-            <p>
-              Running gear operates completely out of sight underwater, bearing immense torque and vibration. Inspect every surface carefully:
-            </p>
+            <div className="overflow-hidden">
+              <GuideInlineImage
+                src="/used-boat-guide/propeller-running-gear.jpg"
+                alt="Close-up of a propeller blade and sacrificial anode on the lower unit"
+                caption="Propeller and running gear: Inspecting the prop blades, lower unit skeg, and zinc anodes reveals evidence of groundings, seal damage, and galvanic wear."
+                align="right"
+              />
+              <p>
+                Running gear operates completely out of sight underwater, bearing immense torque, hydrodynamic pressure, and vibration. A damaged propeller or bent shaft not only robs fuel economy and cruising speed, but will quickly destroy expensive lower unit bearings and gear sets.
+              </p>
+            </div>
             <ul className="list-disc pl-5 space-y-2 text-xs sm:text-sm">
               <li><strong>Propeller Blades:</strong> Check for rolled edges, dings, or bent blades. Even a tiny 1/8-inch nick creates harmonic vibration that destroys lower unit propeller shaft seals and bearings over time.</li>
               <li><strong>Propeller Shaft:</strong> With the engine in neutral, spin the prop by hand. Sight along the hub to confirm the propshaft turns true without wobble. Look behind the thrust washer for fishing monofilament line melted around the oil seal.</li>
@@ -583,6 +659,15 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
           <h2 className="display-font mt-2 text-3xl text-[hsl(var(--primary))] sm:text-4xl">
             The Sea Trial & Professional Marine Survey
           </h2>
+
+          {/* Section 10 Wide Action Photo Transition */}
+          <GuideInlineImage
+            src="/used-boat-guide/sea-trial-running.jpg"
+            alt="Boat running on plane during an on-water sea trial under sunny skies"
+            caption="The sea trial: Running the vessel on the water under actual throttle and sea conditions is the ultimate test of engine cooling, hull balance, and transmission."
+            size="wide"
+          />
+
           <div className="mt-4 space-y-4 text-sm leading-relaxed text-[hsl(var(--muted-foreground))] sm:text-base">
             <p>
               Never buy a boat without running it on the water under actual load, unless it is explicitly priced as a non-running project. Running on garden hose muffs at idle does not test the cooling system, torque, fuel delivery, or hull seaworthiness.

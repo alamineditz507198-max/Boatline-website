@@ -64,56 +64,57 @@ export function EditorialReviewModal({ isOpen, onClose, onOpenStory }: Editorial
   };
 
   const currentStory = selectedStory || (activeTab === 'pending' ? pendingStories[0] : publishedStories[0]);
+  const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 p-4 backdrop-blur-sm sm:p-6"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm sm:p-4 overflow-y-auto"
       onClick={onClose}
     >
       <div
-        className="relative flex h-[88vh] max-h-[850px] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl"
+        className="relative flex h-[92vh] sm:h-[88vh] max-h-[850px] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl sm:rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[hsl(var(--border))] px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--accent))]">
-              <ShieldCheck size={20} />
+        <div className="flex items-center justify-between border-b border-[hsl(var(--border))] px-4 py-3.5 sm:px-6 sm:py-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--accent))]">
+              <ShieldCheck size={18} className="sm:size-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="fine-label text-[hsl(var(--accent))]">Lyman Marine Editorial Desk</span>
-                <span className="rounded-full bg-[hsl(var(--accent))]/15 px-2 py-0.5 text-[10px] font-bold text-[hsl(var(--accent))]">
-                  {isAuthenticated ? 'Staff Authenticated' : 'Passcode Protected'}
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="fine-label text-[10px] sm:text-xs text-[hsl(var(--accent))]">Editorial Desk</span>
+                <span className="rounded-full bg-[hsl(var(--accent))]/15 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-[hsl(var(--accent))]">
+                  {isAuthenticated ? 'Staff' : 'Protected'}
                 </span>
               </div>
-              <h2 className="display-font text-xl leading-tight text-[hsl(var(--primary))] sm:text-2xl">
-                Community Submissions Review
+              <h2 className="display-font text-base sm:text-xl lg:text-2xl leading-tight text-[hsl(var(--primary))]">
+                Submissions Review
               </h2>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {isAuthenticated && (
               <button
                 type="button"
                 onClick={handleLockDesk}
-                className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--border))] px-3 py-1.5 text-xs font-semibold text-[hsl(var(--muted-foreground))] transition hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]"
+                className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border))] px-2.5 py-1 text-xs font-semibold text-[hsl(var(--muted-foreground))] transition hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]"
                 title="Lock editorial desk"
               >
                 <Lock size={12} />
-                <span>Lock Desk</span>
+                <span className="hidden sm:inline">Lock Desk</span>
               </button>
             )}
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full border border-[hsl(var(--border))] p-2 text-[hsl(var(--muted-foreground))] transition hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]"
+              className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full border border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] transition hover:bg-[hsl(var(--muted))] hover:text-[hsl(var(--foreground))]"
               aria-label="Close dialog"
             >
-              <X size={18} />
+              <X size={16} />
             </button>
           </div>
         </div>
@@ -174,29 +175,31 @@ export function EditorialReviewModal({ isOpen, onClose, onOpenStory }: Editorial
         ) : (
           <>
             {/* Tab switch */}
-            <div className="flex items-center justify-between border-b border-[hsl(var(--border))] bg-[hsl(var(--muted))]/40 px-6 py-2">
-              <div className="flex gap-2">
+            <div className="flex items-center justify-between border-b border-[hsl(var(--border))] bg-[hsl(var(--muted))]/40 px-4 py-2 sm:px-6">
+              <div className="flex gap-1.5 sm:gap-2">
                 <button
                   type="button"
                   onClick={() => {
                     setActiveTab('pending');
                     setSelectedStory(null);
+                    setMobileView('list');
                   }}
-                  className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition ${
+                  className={`rounded-lg px-2.5 py-1.5 text-xs font-bold transition ${
                     activeTab === 'pending'
                       ? 'bg-[hsl(var(--primary))] text-white shadow'
                       : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'
                   }`}
                 >
-                  Pending Review ({pendingStories.length})
+                  Pending ({pendingStories.length})
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     setActiveTab('published');
                     setSelectedStory(null);
+                    setMobileView('list');
                   }}
-                  className={`rounded-lg px-3.5 py-1.5 text-xs font-bold transition ${
+                  className={`rounded-lg px-2.5 py-1.5 text-xs font-bold transition ${
                     activeTab === 'published'
                       ? 'bg-[hsl(var(--primary))] text-white shadow'
                       : 'text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]'
@@ -206,20 +209,31 @@ export function EditorialReviewModal({ isOpen, onClose, onOpenStory }: Editorial
                 </button>
               </div>
 
-              <button
-                type="button"
-                onClick={resetToDefaults}
-                className="text-[11px] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))] underline"
-                title="Reset stories to initial editorial seed"
-              >
-                Reset seed data
-              </button>
+              <div className="flex items-center gap-2">
+                {mobileView === 'detail' && (
+                  <button
+                    type="button"
+                    onClick={() => setMobileView('list')}
+                    className="inline-flex items-center gap-1 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-2 py-1 text-xs font-semibold text-[hsl(var(--primary))] lg:hidden"
+                  >
+                    ← List
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={resetToDefaults}
+                  className="text-[11px] text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))] underline"
+                  title="Reset stories to initial editorial seed"
+                >
+                  Reset seed
+                </button>
+              </div>
             </div>
 
             {/* Body grid */}
             <div className="grid flex-1 overflow-hidden lg:grid-cols-[340px_1fr]">
               {/* Submissions list */}
-              <div className="overflow-y-auto border-r border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 p-4">
+              <div className={`overflow-y-auto border-r border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 p-3.5 sm:p-4 ${mobileView === 'detail' ? 'hidden lg:block' : 'block'}`}>
                 {activeTab === 'pending' ? (
                   pendingStories.length === 0 ? (
                     <div className="py-12 text-center text-sm text-[hsl(var(--muted-foreground))]">
@@ -234,8 +248,11 @@ export function EditorialReviewModal({ isOpen, onClose, onOpenStory }: Editorial
                         return (
                           <div
                             key={item.id}
-                            onClick={() => setSelectedStory(item)}
-                            className={`cursor-pointer rounded-xl border p-3.5 transition ${
+                            onClick={() => {
+                              setSelectedStory(item);
+                              setMobileView('detail');
+                            }}
+                            className={`cursor-pointer rounded-xl border p-3.5 transition active:scale-98 ${
                               isSelected
                                 ? 'border-[hsl(var(--accent))] bg-[hsl(var(--card))] shadow-sm'
                                 : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[hsl(var(--accent))]/50'
@@ -267,8 +284,11 @@ export function EditorialReviewModal({ isOpen, onClose, onOpenStory }: Editorial
                       return (
                         <div
                           key={item.id}
-                          onClick={() => setSelectedStory(item)}
-                          className={`cursor-pointer rounded-xl border p-3.5 transition ${
+                          onClick={() => {
+                            setSelectedStory(item);
+                            setMobileView('detail');
+                          }}
+                          className={`cursor-pointer rounded-xl border p-3.5 transition active:scale-98 ${
                             isSelected
                               ? 'border-[hsl(var(--accent))] bg-[hsl(var(--card))] shadow-sm'
                               : 'border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:border-[hsl(var(--accent))]/50'
@@ -294,7 +314,7 @@ export function EditorialReviewModal({ isOpen, onClose, onOpenStory }: Editorial
               </div>
 
               {/* Story review preview panel */}
-              <div className="flex flex-col overflow-y-auto bg-[hsl(var(--card))] p-6 sm:p-8">
+              <div className={`flex flex-col overflow-y-auto bg-[hsl(var(--card))] p-4 sm:p-6 lg:p-8 ${mobileView === 'list' ? 'hidden lg:flex' : 'flex'}`}>
                 {currentStory ? (
                   <div className="space-y-6">
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[hsl(var(--border))] pb-4">
@@ -305,7 +325,7 @@ export function EditorialReviewModal({ isOpen, onClose, onOpenStory }: Editorial
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         {currentStory.status === 'pending' ? (
                           <>
                             <button
@@ -313,18 +333,20 @@ export function EditorialReviewModal({ isOpen, onClose, onOpenStory }: Editorial
                               onClick={() => {
                                 approveStory(currentStory.id);
                                 setSelectedStory(null);
+                                setMobileView('list');
                               }}
-                              className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow transition hover:bg-emerald-700"
+                              className="inline-flex items-center gap-1.5 rounded-full bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white shadow transition hover:bg-emerald-700 active:scale-95"
                             >
-                              <Check size={14} /> Approve & Publish to Magazine
+                              <Check size={14} /> Approve & Publish
                             </button>
                             <button
                               type="button"
                               onClick={() => {
                                 rejectStory(currentStory.id);
                                 setSelectedStory(null);
+                                setMobileView('list');
                               }}
-                              className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--border))] px-3.5 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50"
+                              className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--border))] px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 active:scale-95"
                             >
                               <X size={14} /> Decline
                             </button>
@@ -338,15 +360,19 @@ export function EditorialReviewModal({ isOpen, onClose, onOpenStory }: Editorial
                                   onClose();
                                   onOpenStory(currentStory.id);
                                 }}
-                                className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--primary))] px-4 py-2 text-xs font-bold text-white hover:opacity-90"
+                                className="inline-flex items-center gap-1.5 rounded-full bg-[hsl(var(--primary))] px-3.5 py-2 text-xs font-bold text-white hover:opacity-90 active:scale-95"
                               >
-                                <Eye size={13} /> View Live Article
+                                <Eye size={13} /> View Live
                               </button>
                             )}
                             <button
                               type="button"
-                              onClick={() => deleteStory(currentStory.id)}
-                              className="rounded-full border border-[hsl(var(--border))] p-2 text-[hsl(var(--muted-foreground))] hover:bg-rose-50 hover:text-rose-600"
+                              onClick={() => {
+                                deleteStory(currentStory.id);
+                                setSelectedStory(null);
+                                setMobileView('list');
+                              }}
+                              className="rounded-full border border-[hsl(var(--border))] p-2 text-[hsl(var(--muted-foreground))] hover:bg-rose-50 hover:text-rose-600 active:scale-95"
                               title="Delete story"
                             >
                               <Trash2 size={14} />

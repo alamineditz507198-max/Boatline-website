@@ -45,6 +45,7 @@ import { FromTheWaterSection } from '@/components/FromTheWaterSection';
 import { CommunityPage } from '@/components/CommunityPage';
 import { CommunityStoryDetailPage } from '@/components/CommunityStoryDetailPage';
 import { UsedBoatBuyingGuideArticle } from '@/components/UsedBoatBuyingGuideArticle';
+import { ReadTheWaterArticle } from '@/components/ReadTheWaterArticle';
 import { MarketplaceApp } from '@/marketplace/MarketplaceApp';
 
 const queryClient = new QueryClient();
@@ -85,12 +86,15 @@ const articles = [
   },
   {
     id: '004',
+    slug: 'how-to-read-the-water-when-fishing-slows-down',
     category: 'Fishing',
-    title: 'How to read the water when fishing slows down',
-    excerpt: 'Tide, temperature, and the subtle signs experienced anglers notice first.',
+    title: 'How to Read the Water When Fishing Slows Down',
+    subtitle: 'Diagnosing Environmental Shifts, Reading Surface Cues, and Adapting When the Bite Suddenly Dies',
+    excerpt: 'Tide, temperature, structure, and the subtle environmental signals experienced anglers notice first when activity grinds to a halt.',
     author: 'Rosa Bennett',
-    date: 'Updated seasonally',
-    image: images.wake,
+    date: 'Published September 24, 2026',
+    readTime: '15 min read',
+    image: '/reading-the-water/reading-water-cover.jpg',
   },
 ];
 
@@ -1312,7 +1316,7 @@ function BeginnerGuideBody() {
 
                 {boat.image && (
                   <div className="mt-5 overflow-hidden rounded-2xl border border-[hsl(var(--card-border))] bg-[hsl(var(--muted))] shadow-sm">
-                    <img
+                    <SafeImage
                       src={boat.image}
                       alt={boat.title}
                       className="h-60 w-full object-cover sm:h-72 md:h-80 transition duration-300 hover:scale-[1.01]"
@@ -1573,6 +1577,9 @@ function StoryPage() {
   if (article.id === '003' || (article as any).slug === '10-things-to-check-before-buying-a-used-boat') {
     return <UsedBoatBuyingGuideArticle article={article} />;
   }
+  if (article.id === '004' || (article as any).slug === 'how-to-read-the-water-when-fishing-slows-down') {
+    return <ReadTheWaterArticle article={article} />;
+  }
   return (
     <ArticleLayout>
       <article className="mx-auto max-w-[900px] px-5 py-12 lg:px-10 lg:py-20">
@@ -1625,6 +1632,39 @@ function MaintenanceCallout({ eyebrow, title, children, dark = false }: { eyebro
   );
 }
 
+function ArticleInlineImage({
+  src,
+  alt,
+  caption,
+  align = 'right',
+}: {
+  src: string;
+  alt: string;
+  caption?: string;
+  align?: 'left' | 'right';
+}) {
+  return (
+    <figure
+      className={`my-6 w-full sm:w-[320px] md:w-[360px] rounded-2xl border border-[hsl(var(--card-border))] bg-[hsl(var(--card))] p-2.5 shadow-[var(--shadow-soft)] transition duration-200 hover:shadow-md ${
+        align === 'left' ? 'sm:float-left sm:mr-7 sm:mb-5' : 'sm:float-right sm:ml-7 sm:mb-5'
+      }`}
+    >
+      <div className="overflow-hidden rounded-xl bg-[hsl(var(--muted))]">
+        <SafeImage
+          src={src}
+          alt={alt}
+          className="h-44 sm:h-52 w-full object-cover transition duration-300 hover:scale-[1.02]"
+        />
+      </div>
+      {caption && (
+        <figcaption className="mt-2.5 px-1 text-xs leading-normal text-[hsl(var(--muted-foreground))]">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
 function BoatMaintenanceArticle({ article }: { article: typeof articles[number] }) {
   useEffect(() => { document.title = `${article.title} — Lyman Marine`; }, [article.title]);
   return (
@@ -1658,6 +1698,19 @@ function BoatMaintenanceArticle({ article }: { article: typeof articles[number] 
           <MaintenanceCallout eyebrow="Start here" title="Use your owner's or service manual as the final authority">
             <p>Maintenance requirements vary by boat, engine, drive system, usage, and manufacturer. Always follow your owner’s or service manual for model-specific procedures and intervals.</p>
           </MaintenanceCallout>
+
+          {/* After "Start here" - Right aligned small photo */}
+          <div className="overflow-hidden">
+            <ArticleInlineImage
+              src="/maintenance/predeparture-inspection.jpg"
+              alt="Boat owner doing a pre-departure inspection at the helm"
+              caption="Pre-departure walkaround: Taking 5 minutes at the helm and deck before untying lines prevents most common ramp mishaps."
+              align="right"
+            />
+            <p className="text-base leading-relaxed">
+              Every seasoned skipper follows a rhythm before the key ever turns. A calm, systematic walkthrough of the deck, bilges, controls, and safety equipment turns what could be an emergency offshore into an easily addressed checklist item at the slip.
+            </p>
+          </div>
 
           <MaintenanceSection number="01" title="The quick maintenance schedule">
             <div className="not-prose overflow-x-auto rounded-2xl border border-[hsl(var(--border))]">
@@ -1717,6 +1770,19 @@ function BoatMaintenanceArticle({ article }: { article: typeof articles[number] 
                 'Record anything that needs attention instead of trusting yourself to remember it later.',
               ]} />
             </div>
+
+            {/* After "03 After every trip" - Left aligned small photo */}
+            <div className="mt-6 overflow-hidden">
+              <ArticleInlineImage
+                src="/maintenance/saltwater-rinse.jpg"
+                alt="Boat being rinsed down with fresh water hose after saltwater use"
+                caption="Saltwater washdown: Thoroughly flushing the engine cooling circuits and hosing down fiberglass and trailer components prevents rapid corrosion."
+                align="left"
+              />
+              <p className="mt-2 text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">
+                Salt residue dries into abrasive crystals that eat away at stainless fittings, electrical terminals, trailer brakes, and raw-water cooling passages. Even 10 minutes with a freshwater hose and an outboard flusher will multiply the service life of your gear.
+              </p>
+            </div>
           </MaintenanceSection>
 
           <MaintenanceSection number="04" title="Monthly & periodic maintenance">
@@ -1735,6 +1801,20 @@ function BoatMaintenanceArticle({ article }: { article: typeof articles[number] 
 
           <MaintenanceSection number="05" title="Spring commissioning">
             <p className="mb-5 text-base leading-relaxed">Spring commissioning is a process, not one turn of the key. Work from the hull inward, complete the checks that can be done on land, and keep a short list for the first time the boat is back in the water.</p>
+
+            {/* After "05 Spring commissioning" - Right aligned small photo */}
+            <div className="overflow-hidden mb-6">
+              <ArticleInlineImage
+                src="/maintenance/spring-hull-inspection.jpg"
+                alt="Boat on a trailer or boat stands while owner inspects the hull and running gear"
+                caption="Spring yard inspection: Checking the hull bottom, thru-hull fittings, and running gear while dry on stands prevents surprises on launch day."
+                align="right"
+              />
+              <p className="text-base leading-relaxed">
+                Take full advantage of the dry season before the crane or ramp trailer touches water. Look closely along the chines, strakes, and keel for stress cracks, gelcoat gouges, or soft spots in the laminate that need patching.
+              </p>
+            </div>
+
             <div className="grid gap-4 md:grid-cols-2">
               <MaintenanceChecklist title="Hull & plumbing" columns items={[
                 'Inspect the hull, bottom, and antifouling paint where applicable.',
@@ -1764,6 +1844,19 @@ function BoatMaintenanceArticle({ article }: { article: typeof articles[number] 
             <MaintenanceCallout eyebrow="After launch" title="Do a deliberate leak check at the dock" dark>
               <p>Once the boat is in the water, check the appropriate thru-hulls, seacocks, drain plugs, shaft or drive areas, and other systems that can admit water. Give the hull and bilge time to show you what is happening before heading away from the launch area.</p>
             </MaintenanceCallout>
+
+            {/* After "After launch" - Left aligned small photo reinforcing leak-check warning */}
+            <div className="mt-6 overflow-hidden">
+              <ArticleInlineImage
+                src="/maintenance/dock-leak-check.jpg"
+                alt="Boat sitting at the dock while the owner checks the bilge and engine compartment"
+                caption="Dockside leak verification: Stay tied to the dock for 10-15 minutes after splashing to confirm bilges remain dry and shaft packing or thru-hulls aren't leaking."
+                align="left"
+              />
+              <p className="mt-2 text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">
+                Never cast off lines the moment the boat floats off the trailer. Lift the engine access hatch, inspect every hose connection below the waterline with a strong flashlight, and verify the automatic bilge pump floats freely.
+              </p>
+            </div>
           </MaintenanceSection>
 
           <MaintenanceSection number="06" title="Mid-season check">
@@ -1799,6 +1892,20 @@ function BoatMaintenanceArticle({ article }: { article: typeof articles[number] 
 
           <MaintenanceSection number="08" title="Battery & electrical systems">
             <p className="text-base leading-relaxed">Start with the simple, visible checks: terminals should be secure and reasonably clean, cables should not be damaged or chafed, and wiring should be supported and protected from moisture and heat. Look for corrosion, loose connections, swelling, damaged insulation, and charging behavior that has changed.</p>
+            
+            {/* After "08 Battery & electrical systems" - Right aligned small photo */}
+            <div className="my-5 overflow-hidden">
+              <ArticleInlineImage
+                src="/maintenance/battery-terminals.jpg"
+                alt="Close-up of marine battery terminals and wiring connections"
+                caption="Clean battery connections: Corroded posts or loose terminal wingnuts cause unexpected voltage drops and intermittent starter failures."
+                align="right"
+              />
+              <p className="text-base leading-relaxed">
+                Marine electrical systems endure constant pounding and humid salt air. Coat clean terminal studs with marine dielectric grease or protective varnish, and replace corroded lock washers or wing nuts with stainless nyloc nuts where approved.
+              </p>
+            </div>
+
             <p className="mt-4 text-base leading-relaxed">Inspect the charging system, battery condition, breakers, fuses, switches, navigation equipment, pumps, and accessories according to the equipment manuals. Keep battery work dry and controlled, and disconnect power as directed before touching a circuit.</p>
             <MaintenanceCallout eyebrow="Call a professional" title="Electrical problems deserve respect">
               <p>Have a qualified marine technician handle repeated breaker trips, unexplained battery drain, hot wires or terminals, charging faults, damaged harnesses, shore-power problems, or any diagnosis that requires bypassing safety devices.</p>
@@ -1819,6 +1926,20 @@ function BoatMaintenanceArticle({ article }: { article: typeof articles[number] 
 
           <MaintenanceSection number="10" title="Hull, propeller & running gear">
             <p className="text-base leading-relaxed">Inspect the hull for impact damage, stress cracks, blisters where applicable, loose fittings, and changes in the finish. Inspect the propeller or other propulsion hardware for bends, nicks, line, weeds, and missing hardware only when the boat is secure and the equipment can be reached safely.</p>
+
+            {/* After "10 Hull, propeller & running gear" - Left aligned small photo */}
+            <div className="my-5 overflow-hidden">
+              <ArticleInlineImage
+                src="/maintenance/propeller-anode.jpg"
+                alt="Close-up of a propeller blade and sacrificial zinc anode on the lower unit"
+                caption="Propeller and anode inspection: Sacrificial zinc anodes should be replaced when 50% depleted to keep expensive props and gearcases from galvanic pitting."
+                align="left"
+              />
+              <p className="text-base leading-relaxed">
+                Even minor blade dings or discarded monofilament fishing line wrapped tightly behind the prop seal can let seawater into the lower unit gear oil. Pull the prop at least once a season, grease the prop shaft spline, and replace eroded zinc or aluminum anodes.
+              </p>
+            </div>
+
             <p className="mt-4 text-base leading-relaxed">Anodes, shafts, drives, rudders, and steering components can show wear that is not obvious from the helm. If you find a significant impact, unusual vibration, steering play, structural concern, damaged drive component, or a problem below the waterline, have a marine professional inspect it before continued use.</p>
           </MaintenanceSection>
 
@@ -1833,6 +1954,19 @@ function BoatMaintenanceArticle({ article }: { article: typeof articles[number] 
               'Confirm the boat is supported, tied down, and balanced as specified for the trailer.',
             ]} />
           </MaintenanceSection>
+
+          {/* Before "12 DIY vs professional" - Right aligned small photo providing visual transition */}
+          <div className="overflow-hidden pt-6">
+            <ArticleInlineImage
+              src="/maintenance/marine-technician.jpg"
+              alt="Marine technician working on an engine in a marina workshop"
+              caption="Certified marine technician: Knowing when to hand off high-torque, internal engine, or complex electrical diagnostics preserves warranties and safety."
+              align="right"
+            />
+            <p className="text-base leading-relaxed">
+              Knowing your own limits is one of the highest marks of seamanship. Routine cleaning, fluid level monitoring, and visual walkarounds are great owner habits, but precision drive adjustments, compression testing, and major wiring overhauls are best left to ABYC-certified professionals.
+            </p>
+          </div>
 
           <MaintenanceSection number="12" title="DIY vs professional">
             <div className="not-prose overflow-x-auto rounded-2xl border border-[hsl(var(--border))]">
@@ -1909,6 +2043,8 @@ function Router() {
         <Route path="/story/community/:id" component={CommunityStoryDetailPage} />
         <Route path="/10-things-to-check-before-buying-a-used-boat" component={() => <UsedBoatBuyingGuideArticle article={articles[1]} />} />
         <Route path="/10-things-to-check-before-buying-a-used-boat/" component={() => <UsedBoatBuyingGuideArticle article={articles[1]} />} />
+        <Route path="/how-to-read-the-water-when-fishing-slows-down" component={() => <ReadTheWaterArticle article={articles[2]} />} />
+        <Route path="/how-to-read-the-water-when-fishing-slows-down/" component={() => <ReadTheWaterArticle article={articles[2]} />} />
         <Route path="/topic/:kind/:slug" component={ResourceStoryPage} />
         <Route path="/story/:id" component={StoryPage} />
         <Route path="/about" component={() => <InfoPage kind="about" />} />
