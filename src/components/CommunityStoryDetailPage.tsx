@@ -13,7 +13,7 @@ export function CommunityStoryDetailPage() {
 
   useEffect(() => {
     if (story) {
-      document.title = `${story.title} — Lyman Marine From the Water`;
+      document.title = `${story.title} — Boatline From the Water`;
     }
   }, [story]);
 
@@ -101,7 +101,7 @@ export function CommunityStoryDetailPage() {
           </div>
 
           <span className="rounded-full bg-[hsl(var(--muted))] px-3 py-1 font-mono text-[11px] text-[hsl(var(--primary))]">
-            Lyman Marine Reader Dispatch
+            Boatline Reader Dispatch
           </span>
         </div>
       </header>

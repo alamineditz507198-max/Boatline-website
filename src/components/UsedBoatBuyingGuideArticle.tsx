@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
+import { BoatlineBoatLogo } from '@/components/BoatlineBoatLogo';
 import {
   ArrowLeft,
   ArrowRight,
@@ -99,7 +100,7 @@ function GuideInlineImage({
 
 export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArticleProps) {
   useEffect(() => {
-    document.title = `${article.title} — Used Boat Buying Checklist & Guide | Lyman Marine`;
+    document.title = `${article.title} — Used Boat Buying Checklist & Guide | Boatline`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [article.title]);
 
@@ -188,7 +189,7 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
       <header className="mx-auto max-w-5xl px-5 pt-12 pb-8 sm:px-8 sm:pt-16 sm:pb-12">
         <div className="flex flex-wrap items-center gap-2 text-[hsl(var(--accent))]">
           <span className="fine-label font-bold tracking-widest text-[hsl(var(--accent))]">
-            Lyman Marine Field Guide
+            Boatline Field Guide
           </span>
           <span className="text-xs text-[hsl(var(--muted-foreground))]">·</span>
           <span className="fine-label text-[hsl(var(--muted-foreground))]">Used Boat Buying</span>
@@ -211,9 +212,7 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
         {/* Byline & Metadata */}
         <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-y border-[hsl(var(--border))] py-4 text-xs text-[hsl(var(--muted-foreground))]">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[hsl(var(--primary))] font-serif font-bold text-white">
-              LM
-            </div>
+            <BoatlineBoatLogo variant="pfp" size={38} />
             <div>
               <span className="font-bold text-[hsl(var(--primary))]">{article.author}</span>
               <span className="block text-[11px]">Editorial Inspection & Marine Standards Desk</span>
@@ -862,7 +861,7 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
             “Never judge a used boat by appearance alone. A clean-looking boat can still have expensive mechanical or structural problems.”
           </blockquote>
           <p className="mt-3 text-xs uppercase tracking-widest text-[hsl(var(--accent))] font-bold">
-            — Lyman Marine Editorial Field Rule
+            — Boatline Editorial Field Rule
           </p>
         </div>
 
@@ -874,7 +873,7 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
             <div>
               <strong className="block text-[hsl(var(--primary))] font-mono text-[11px] uppercase">SEO Title:</strong>
               <p className="mt-1 text-[hsl(var(--muted-foreground))]">
-                10 Things to Check Before Buying a Used Boat | Complete Inspection Checklist — Lyman Marine
+                10 Things to Check Before Buying a Used Boat | Complete Inspection Checklist — Boatline
               </p>
             </div>
             <div>
@@ -912,7 +911,7 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
           {/* Internal Links */}
           <div className="mt-6 border-t border-[hsl(var(--border))] pt-4">
             <strong className="block text-[hsl(var(--primary))] text-xs font-bold uppercase tracking-wider">
-              Related Lyman Marine Guides:
+              Related Boatline Guides:
             </strong>
             <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
               <Link
@@ -945,7 +944,7 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
             href="/"
             className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-6 py-3 text-xs font-bold text-white shadow transition hover:bg-[hsl(var(--accent))]"
           >
-            <ArrowLeft size={14} /> Back to Lyman Marine Home
+            <ArrowLeft size={14} /> Back to Boatline Home
           </Link>
         </div>
       </main>

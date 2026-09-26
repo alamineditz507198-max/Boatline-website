@@ -74,7 +74,7 @@ function ArticleInlineImage({
         {caption && (
           <figcaption className="mt-3 px-1 text-xs leading-normal text-[hsl(var(--muted-foreground))] flex items-center justify-between">
             <span>{caption}</span>
-            <span className="text-[10px] font-mono uppercase tracking-wider text-[hsl(var(--accent))]">Lyman Field Notes</span>
+            <span className="text-[10px] font-mono uppercase tracking-wider text-[hsl(var(--accent))]">Boatline Field Notes</span>
           </figcaption>
         )}
       </figure>
@@ -373,7 +373,7 @@ export function ReadTheWaterArticle({ article }: ReadTheWaterArticleProps) {
           </div>
           <figcaption className="mt-3 px-2 text-xs text-[hsl(var(--muted-foreground))] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
             <span>When the bite halts, your first instinct should be reading the environment rather than frantically cycling through tackle trays.</span>
-            <span className="text-[11px] font-mono text-[hsl(var(--accent))] shrink-0">Photo: Lyman Field Desk</span>
+            <span className="text-[11px] font-mono text-[hsl(var(--accent))] shrink-0">Photo: Boatline Field Desk</span>
           </figcaption>
         </figure>
       </div>
@@ -1143,7 +1143,7 @@ export function ReadTheWaterArticle({ article }: ReadTheWaterArticleProps) {
             {/* Next Story / Related Reading Footer */}
             <div className="not-prose mt-16 pt-10 border-t border-[hsl(var(--border))]">
               <h3 className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--accent))] mb-6">
-                More Essential Guides from Lyman Marine
+                More Essential Guides from Boatline
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <Link

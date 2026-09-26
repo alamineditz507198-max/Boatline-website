@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useCommunityStories, useSubscribers } from '@/lib/community-store';
 import { authenticateAdmin } from '@/lib/firebase';
+import { BoatlineBoatLogo } from '@/components/BoatlineBoatLogo';
 import type { CommunityStory } from '@/types/community';
 
 const EDITORIAL_PASSCODE = '280230507198';
@@ -178,12 +179,12 @@ export function EditorialReviewModal({ isOpen, onClose, onOpenStory }: Editorial
         {!isAuthenticated ? (
           <div className="flex flex-1 flex-col items-center justify-center p-6 text-center sm:p-12">
             <div className="w-full max-w-sm rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-7 shadow-sm">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--accent))] shadow-sm">
-                <KeyRound size={22} />
+              <div className="mx-auto flex justify-center mb-3">
+                <BoatlineBoatLogo variant="pfp" size={54} />
               </div>
 
-              <h3 className="display-font mt-4 text-xl text-[hsl(var(--primary))]">
-                Editorial passcode required
+              <h3 className="display-font mt-2 text-xl text-[hsl(var(--primary))]">
+                Boatline editorial desk
               </h3>
               <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
                 Enter editorial passcode to moderate submissions and manage subscribers.

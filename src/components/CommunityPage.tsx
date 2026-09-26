@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'wouter';
 import { ArrowLeft, PlusCircle, ShieldCheck, ShipWheel, Sparkles, BookOpen, Compass, Award } from 'lucide-react';
+import { BoatlineBoatLogo } from '@/components/BoatlineBoatLogo';
 import { FromTheWaterSection } from './FromTheWaterSection';
 import { ShareStoryModal } from './ShareStoryModal';
 import { EditorialReviewModal } from './EditorialReviewModal';
@@ -28,13 +29,13 @@ export function CommunityPage() {
             href="/"
             className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white/70 transition hover:text-white"
           >
-            <ArrowLeft size={14} /> Back to Lyman Marine
+            <ArrowLeft size={14} /> Back to Boatline
           </Link>
 
           <div className="mt-8 max-w-3xl">
             <div className="flex items-center gap-3 text-[hsl(var(--accent))]">
-              <ShipWheel size={20} />
-              <span className="fine-label">Lyman Marine Editorial Community</span>
+              <BoatlineBoatLogo size={32} color="hsl(var(--accent))" />
+              <span className="fine-label">Boatline Editorial Community</span>
             </div>
             <h1 className="display-font mt-4 text-5xl leading-[.92] tracking-[-.04em] sm:text-6xl md:text-7xl">
               From the Water
@@ -50,20 +51,6 @@ export function CommunityPage() {
                 className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--accent))] px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:brightness-110"
               >
                 <PlusCircle size={17} /> Share Your Story
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setIsReviewOpen(true)}
-                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
-              >
-                <ShieldCheck size={16} />
-                <span>Editorial Desk</span>
-                {pendingStories.length > 0 && (
-                  <span className="rounded-full bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-black">
-                    {pendingStories.length} pending
-                  </span>
-                )}
               </button>
             </div>
           </div>
@@ -105,7 +92,7 @@ export function CommunityPage() {
               <div>
                 <h4 className="display-font text-lg text-[hsl(var(--primary))]">Permanent Archive</h4>
                 <p className="mt-1 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">
-                  Published dispatches become part of the Lyman Marine permanent waterside library for fellow mariners.
+                  Published dispatches become part of the Boatline permanent waterside library for fellow mariners.
                 </p>
               </div>
             </div>

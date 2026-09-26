@@ -1,5 +1,6 @@
 import { useState, useRef, type ChangeEvent } from 'react';
 import { X, Upload, Check, Image as ImageIcon, Trash2, ShipWheel, Sparkles } from 'lucide-react';
+import { BoatlineBoatLogo } from '@/components/BoatlineBoatLogo';
 import type { StoryType } from '@/types/community';
 import { useCommunityStories } from '@/lib/community-store';
 
@@ -128,9 +129,9 @@ export function ShareStoryModal({ isOpen, onClose, onOpenModeration }: ShareStor
       >
         {/* Mobile handle & sticky header */}
         <div className="flex items-center justify-between border-b border-[hsl(var(--border))] px-5 py-4 sm:px-8">
-          <div className="flex items-center gap-2 text-[hsl(var(--accent))]">
-            <ShipWheel size={18} className="shrink-0" />
-            <span className="fine-label truncate">Lyman Marine / Community</span>
+          <div className="flex items-center gap-2.5 text-[hsl(var(--accent))]">
+            <BoatlineBoatLogo variant="pfp" size={24} />
+            <span className="fine-label truncate">Boatline / Community</span>
           </div>
           <button
             type="button"
@@ -159,26 +160,14 @@ export function ShareStoryModal({ isOpen, onClose, onOpenModeration }: ShareStor
               <p className="mt-4 text-xs text-[hsl(var(--muted-foreground))]">
                 To protect publication quality, our desk verifies submissions before they appear in “From the Water.”
               </p>
-              <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
+              <div className="mt-8 flex justify-center">
                 <button
                   type="button"
                   onClick={handleResetAndClose}
-                  className="w-full sm:w-auto rounded-full bg-[hsl(var(--primary))] px-6 py-3 text-sm font-bold text-white transition hover:opacity-90 active:scale-98"
+                  className="w-full sm:w-auto rounded-full bg-[hsl(var(--primary))] px-8 py-3 text-sm font-bold text-white transition hover:opacity-90 active:scale-98"
                 >
                   Back to Community
                 </button>
-                {onOpenModeration && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      handleResetAndClose();
-                      onOpenModeration();
-                    }}
-                    className="w-full sm:w-auto rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-6 py-3 text-sm font-semibold text-[hsl(var(--primary))] transition hover:bg-[hsl(var(--muted))] active:scale-98"
-                  >
-                    View in Editorial Desk
-                  </button>
-                )}
               </div>
             </div>
           ) : (
@@ -188,7 +177,7 @@ export function ShareStoryModal({ isOpen, onClose, onOpenModeration }: ShareStor
                   Share Your Story
                 </h2>
                 <p className="mt-2 text-xs sm:text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">
-                  Share your boating experience with the Lyman Marine community. Original stories of boat restorations, first vessels, unforgettable trips, or days on the water.
+                  Share your boating experience with the Boatline community. Original stories of boat restorations, first vessels, unforgettable trips, or days on the water.
                 </p>
               </div>
 
@@ -377,7 +366,7 @@ export function ShareStoryModal({ isOpen, onClose, onOpenModeration }: ShareStor
                 </div>
 
                 <div className="rounded-xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--muted))]/30 p-3 sm:p-3.5 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">
-                  <span className="font-semibold text-[hsl(var(--primary))]">Editorial review:</span> All submissions are reviewed by Lyman Marine editors to verify authentic boating context before appearing publicly on “From the Water.”
+                  <span className="font-semibold text-[hsl(var(--primary))]">Editorial review:</span> All submissions are reviewed by Boatline editors to verify authentic boating context before appearing publicly on “From the Water.”
                 </div>
               </form>
             </div>

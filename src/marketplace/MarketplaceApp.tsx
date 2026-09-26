@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
+import { BoatlineBoatLogo } from '@/components/BoatlineBoatLogo';
 import {
   ShipWheel,
   ArrowLeft,
@@ -18,7 +19,7 @@ export function MarketplaceApp() {
   const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
-    document.title = 'Marketplace — Coming Soon · Lyman Marine';
+    document.title = 'Marketplace — Coming Soon · Boatline';
     window.scrollTo(0, 0);
   }, []);
 
@@ -39,14 +40,15 @@ export function MarketplaceApp() {
             className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[.14em] text-white/70 hover:text-white transition"
           >
             <ArrowLeft size={16} />
-            <span>Back to Lyman Marine</span>
+            <span>Back to Boatline</span>
           </Link>
 
-          <Link href="/" className="text-center" aria-label="Lyman Marine home">
+          <Link href="/" className="inline-flex items-center gap-2.5 text-center hover:opacity-90 transition" aria-label="Boatline home">
+            <BoatlineBoatLogo size={34} theme="dark" className="text-white" />
             <span className="display-font text-[19px] leading-none tracking-[.08em] text-white">
-              LYMAN{' '}
+              BOAT
               <span className="font-sans text-[9px] font-semibold tracking-[.38em] text-[hsl(var(--accent))]">
-                MARINE
+                LINE
               </span>
             </span>
           </Link>
@@ -69,7 +71,7 @@ export function MarketplaceApp() {
 
           <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/80">
             <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-            <span>Lyman Marine Marketplace</span>
+            <span>Boatline Marketplace</span>
           </div>
 
           <h1 className="display-font mt-5 text-5xl leading-[.92] tracking-[-.04em] text-white sm:text-6xl md:text-7xl">
@@ -125,7 +127,7 @@ export function MarketplaceApp() {
           {/* Return Home & Explore Editorial Sections */}
           <div className="mt-12 pt-10 border-t border-white/10">
             <p className="text-xs uppercase tracking-[.15em] font-semibold text-white/50 mb-4">
-              Explore Lyman Marine while you wait
+              Explore Boatline while you wait
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
@@ -163,7 +165,7 @@ export function MarketplaceApp() {
 
       {/* Footer */}
       <footer className="border-t border-white/10 py-6 text-center text-xs text-white/40">
-        <p>&copy; {new Date().getFullYear()} Lyman Marine. Built for the boating life.</p>
+        <p>&copy; {new Date().getFullYear()} Boatline Co. Built for the boating life.</p>
       </footer>
     </div>
   );

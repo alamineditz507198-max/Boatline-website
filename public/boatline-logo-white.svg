@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" fill="none">
-  <!-- Navy Blue Burgee / Pennant on mast -->
+  <!-- Navy/Sky Blue Burgee / Pennant on mast -->
   <path
     d="M312 90 C264 88 215 100 184 117 C218 134 266 142 322 144 Z"
-    fill="#0284c7"
-    stroke="#0369a1"
-    stroke-width="10"
+    fill="#38bdf8"
+    stroke="#ffffff"
+    stroke-width="8"
     stroke-linejoin="round"
   />
 
@@ -14,23 +14,23 @@
     y1="216"
     x2="299"
     y2="76"
-    stroke="#0f294a"
-    stroke-width="16"
+    stroke="#ffffff"
+    stroke-width="12"
     stroke-linecap="round"
   />
   <circle
     cx="298"
     cy="72"
-    r="14"
-    fill="#0f294a"
-    stroke="#0f294a"
-    stroke-width="8"
+    r="9"
+    fill="#ffffff"
+    stroke="#ffffff"
+    stroke-width="5"
   />
 
   <!-- Hardtop Canopy Roof -->
   <path
     d="M276 226 C375 210 500 206 594 210 L594 216 C495 212 375 215 276 232 Z"
-    fill="#0f294a"
+    fill="#ffffff"
   />
 
   <!-- Windshield frame / Forward canopy visor strut to cabin -->
@@ -39,8 +39,8 @@
     y1="216"
     x2="614"
     y2="271"
-    stroke="#0f294a"
-    stroke-width="16"
+    stroke="#ffffff"
+    stroke-width="11"
     stroke-linecap="round"
   />
 
@@ -48,17 +48,17 @@
   <path
     d="M398 285 C468 238 548 221 614 271"
     fill="none"
-    stroke="#0f294a"
-    stroke-width="16"
+    stroke="#ffffff"
+    stroke-width="11"
     stroke-linecap="round"
   />
 
-  <!-- Hardtop Rear Arch / Swept pillar -->
+  <!-- Hardtop Rear Arch / Aerodynamic swept pillar -->
   <path
     d="M336 224 C372 235 400 256 398 285 C396 295 385 303 365 312"
     fill="none"
-    stroke="#0f294a"
-    stroke-width="16"
+    stroke="#ffffff"
+    stroke-width="11"
     stroke-linecap="round"
   />
 
@@ -66,23 +66,23 @@
   <path
     d="M520 279 L805 259 C818 259 825 267 825 281 L825 286"
     fill="none"
-    stroke="#0f294a"
-    stroke-width="16"
+    stroke="#ffffff"
+    stroke-width="11"
     stroke-linecap="round"
     stroke-linejoin="round"
   />
 
   <!-- Three Horizontal Capsule Portholes -->
-  <rect x="520" y="295" width="28" height="11" rx="5.5" fill="#0f294a" />
-  <rect x="605" y="287" width="28" height="11" rx="5.5" fill="#0f294a" />
-  <rect x="694" y="278" width="30" height="11" rx="5.5" fill="#0f294a" />
+  <rect x="520" y="295" width="28" height="9" rx="4.5" fill="#ffffff" />
+  <rect x="605" y="288" width="28" height="9" rx="4.5" fill="#ffffff" />
+  <rect x="694" y="279" width="30" height="9" rx="4.5" fill="#ffffff" />
 
-  <!-- Sheer line / Gunwale -->
+  <!-- Sheer line / Gunwale (cockpit dipping to coaming, rising to bow) -->
   <path
     d="M98 335 C102 335 104 337 105 340 L355 314 C450 304 600 291 825 286 L918 269"
     fill="none"
-    stroke="#0f294a"
-    stroke-width="16"
+    stroke="#ffffff"
+    stroke-width="11"
     stroke-linecap="round"
   />
 
@@ -90,8 +90,8 @@
   <path
     d="M98 335 L112 406 L850 406 L918 269"
     fill="none"
-    stroke="#0f294a"
-    stroke-width="18"
+    stroke="#ffffff"
+    stroke-width="13"
     stroke-linecap="round"
     stroke-linejoin="round"
   />

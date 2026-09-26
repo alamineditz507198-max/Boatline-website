@@ -31,6 +31,7 @@ import {
   Menu,
   RefreshCw,
   Search,
+  ShieldCheck,
   ShipWheel,
   Sparkles,
   Star,
@@ -42,10 +43,12 @@ import {
   Youtube,
 } from 'lucide-react';
 import { FromTheWaterSection } from '@/components/FromTheWaterSection';
+import { EditorialReviewModal } from '@/components/EditorialReviewModal';
 import { CommunityPage } from '@/components/CommunityPage';
 import { CommunityStoryDetailPage } from '@/components/CommunityStoryDetailPage';
 import { UsedBoatBuyingGuideArticle } from '@/components/UsedBoatBuyingGuideArticle';
 import { ReadTheWaterArticle } from '@/components/ReadTheWaterArticle';
+import { BoatlineBoatLogo } from '@/components/BoatlineBoatLogo';
 import { MarketplaceApp } from '@/marketplace/MarketplaceApp';
 import { subscribeNewsletter } from '@/lib/community-store';
 
@@ -68,7 +71,7 @@ const articles = [
     title: 'The Complete Boat Maintenance Checklist',
     subtitle: 'What to Check Before, During & After Every Season',
     excerpt: 'A practical year-round guide to keeping your boat ready, reliable, and prepared for the water.',
-    author: 'Lyman Marine Editorial Desk',
+    author: 'Boatline Editorial Desk',
     date: 'Published September 13, 2026',
     readTime: '18 min read',
     image: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?auto=format&fit=crop&w=1600&q=80',
@@ -80,7 +83,7 @@ const articles = [
     title: '10 Things to Check Before Buying a Used Boat',
     subtitle: 'A Practical Field Guide to Avoiding Costly Surprises on the Water',
     excerpt: 'How to inspect hull integrity, engines, hours, electronics, running gear, and trailers before making an offer.',
-    author: 'Lyman Marine Editorial Desk',
+    author: 'Boatline Editorial Desk',
     date: 'Published September 13, 2026',
     readTime: '16 min read',
     image: '/used-boat-cover.jpg',
@@ -131,13 +134,8 @@ function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-function Mark() {
-  return (
-    <span className="relative inline-flex items-center justify-center" aria-label="Lyman Marine mark">
-      <span className="absolute h-7 w-7 rotate-45 border border-[hsl(var(--accent))]" />
-      <span className="relative text-[11px] font-bold tracking-[.18em] text-[hsl(var(--accent))]">LM</span>
-    </span>
-  );
+function Mark({ size = 34 }: { size?: number }) {
+  return <BoatlineBoatLogo size={size} theme="dark" className="text-white" />;
 }
 
 function Header({ onSearch, solid = false, compact = false }: { onSearch: () => void; solid?: boolean; compact?: boolean }) {
@@ -156,8 +154,9 @@ function Header({ onSearch, solid = false, compact = false }: { onSearch: () => 
             <Link data-testid={`link-nav-${id}`} href={path} key={id} className={navLinkClass(path)} aria-current={isCurrent(path) ? 'page' : undefined}>{label}</Link>
           ))}
         </nav>
-        <Link href="/" data-testid="link-centered-brand" className="shrink-0 text-center xl:mx-6" aria-label="Lyman Marine home">
-          <span className="display-font text-[18px] leading-none tracking-[.08em]">LYMAN <span className="font-sans text-[9px] font-semibold tracking-[.38em] text-[hsl(var(--accent))]">MARINE</span></span>
+        <Link href="/" data-testid="link-centered-brand" className="shrink-0 text-center xl:mx-6 inline-flex items-center gap-2.5 text-white hover:opacity-90 transition" aria-label="Boatline home">
+          <BoatlineBoatLogo size={34} theme="dark" className="text-white" />
+          <span className="display-font text-[18px] leading-none tracking-[.08em]">BOAT <span className="font-sans text-[9px] font-semibold tracking-[.38em] text-[hsl(var(--accent))]">LINE</span></span>
         </Link>
         <div className="ml-auto hidden min-w-0 flex-1 items-center justify-end gap-2 pl-4 xl:flex">
           <nav aria-label="Boating navigation" className="flex min-w-0 items-center gap-2.5">
@@ -193,7 +192,7 @@ function Header({ onSearch, solid = false, compact = false }: { onSearch: () => 
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="rounded bg-amber-400 px-2 py-0.5 text-[9px] font-extrabold uppercase text-[#0a1628]">Coming Soon</span>
-                    <span className="text-xs font-extrabold tracking-wider uppercase text-white">Lyman Marine Marketplace</span>
+                    <span className="text-xs font-extrabold tracking-wider uppercase text-white">Boatline Marketplace</span>
                   </div>
                   <p className="mt-1 text-xs text-white/70">
                     Curated boat marketplace, certified marine dealers, and boat valuation tools launching soon.
@@ -229,7 +228,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
         category: 'Boat Buying',
         title: beginnerBoatGuide.title,
         excerpt: beginnerBoatGuide.copy,
-        author: 'Lyman Marine desk',
+        author: 'Boatline desk',
         date: 'Updated seasonally',
         image: images.sail,
         path: `/topic/buying/${slugify(beginnerBoatGuide.title)}`,
@@ -239,7 +238,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
         category: 'Boat Buying',
         title: buyerFieldGuide.title,
         excerpt: buyerFieldGuide.copy,
-        author: 'Lyman Marine desk',
+        author: 'Boatline desk',
         date: 'Updated seasonally',
         image: images.wake,
         path: `/topic/buying/${slugify(buyerFieldGuide.title)}`,
@@ -249,7 +248,7 @@ function SearchPanel({ onClose }: { onClose: () => void }) {
     return searchableStories.filter((article) => `${article.title} ${article.category} ${article.excerpt}`.toLowerCase().includes(query.toLowerCase()));
   }, [query]);
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-[rgba(12,35,50,.72)] px-4 pt-20 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Search Lyman Marine">
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-[rgba(12,35,50,.72)] px-4 pt-20 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Search Boatline">
       <div className="w-full max-w-2xl overflow-hidden rounded-2xl bg-[hsl(var(--card))] shadow-2xl animate-scale">
         <div className="flex items-center gap-3 border-b border-[hsl(var(--border))] px-5 py-4">
           <Search size={19} className="text-[hsl(var(--accent))]" />
@@ -432,7 +431,7 @@ function MarineConditionsPage() {
         : "bg-emerald-950 text-emerald-100 border-emerald-400/40";
 
   useEffect(() => {
-    document.title = "Marine Conditions — Lyman Marine";
+    document.title = "Marine Conditions — Boatline";
   }, []);
 
   useEffect(() => {
@@ -583,7 +582,7 @@ function MarineConditionsPage() {
               <section className="mt-12 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-6 lg:p-8">
                 <div className="flex items-center gap-3 text-[hsl(var(--accent))]"><Sparkles size={17} /><span className="fine-label">Live data sources</span></div>
                 <div className="mt-5 grid gap-4 md:grid-cols-3">{(data.sources ?? []).map((source) => <a key={source.name} href={source.url} target="_blank" rel="noreferrer" className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 transition hover:-translate-y-0.5 hover:border-[hsl(var(--accent))]"><p className="text-sm font-bold text-[hsl(var(--primary))]">{source.name}</p><p className="mt-2 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">{source.note}</p></a>)}</div>
-                 <p className="mt-6 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">Lyman Marine requests fresh readings when this page opens and refreshes them automatically while the page is open. No private API key is required for these public U.S. sources. Tide, water-temperature, and wave coverage varies by location; unavailable readings are shown rather than estimated.</p>
+                 <p className="mt-6 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">Boatline requests fresh readings when this page opens and refreshes them automatically while the page is open. No private API key is required for these public U.S. sources. Tide, water-temperature, and wave coverage varies by location; unavailable readings are shown rather than estimated.</p>
               </section>
             </>
           )}
@@ -641,7 +640,7 @@ function EditionStrip() {
   return (
     <section className="border-b border-[hsl(var(--border))] bg-[hsl(var(--background))]">
       <div className="mx-auto grid max-w-[1320px] gap-4 px-5 py-5 text-[hsl(var(--muted-foreground))] sm:grid-cols-[1fr_auto_auto] sm:items-center lg:px-10">
-         <div className="flex items-center gap-3"><span className="editorial-number">LM / 04</span><span className="h-px w-8 bg-[hsl(var(--accent))]" /><span className="fine-label">The summer issue</span></div>
+         <div className="flex items-center gap-3"><span className="editorial-number">BL / 04</span><span className="h-px w-8 bg-[hsl(var(--accent))]" /><span className="fine-label">The summer issue</span></div>
          <span className="text-xs">Reporting from the ramp, helm, and fish box</span>
         <Link data-testid="link-about-desk" href="/about" className="inline-flex items-center gap-2 text-xs font-bold text-[hsl(var(--primary))] transition hover:text-[hsl(var(--accent))]">Meet the desk <ArrowRight size={14} /></Link>
       </div>
@@ -792,7 +791,7 @@ function FieldNotes() {
             <div className="image-zoom relative min-h-[300px] overflow-hidden lg:min-h-[500px]">
               <SafeImage data-testid={`img-field-note-${activeNote.number}`} src={activeNote.image} alt={activeNote.alt} className="absolute inset-0 h-full w-full object-cover" />
               <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(8,28,42,.64),transparent_62%)]" />
-              <span className="fine-label absolute bottom-6 left-6 text-white/80 lg:bottom-8 lg:left-8">Lyman Marine / Field Notes</span>
+              <span className="fine-label absolute bottom-6 left-6 text-white/80 lg:bottom-8 lg:left-8">Boatline / Field Notes</span>
             </div>
             <div className="flex flex-col justify-between p-7 lg:p-10">
               <div className="flex items-center justify-between">
@@ -835,7 +834,7 @@ function BuyBetter() {
         <div>
           <SectionIntro eyebrow="Boat buying" title="How to choose your next boat." copy="Compare boat types, ownership costs, towing requirements, and the features that matter for your water." />
           <div className="space-y-3">
-            {[['The 10 best boats for beginners', `/topic/buying/${slugify(beginnerBoatGuide.title)}`], ['The boat buyer’s field guide', `/topic/buying/${slugify(buyerFieldGuide.title)}`], ['Shop the Lyman shortlist', '/buying']].map(([item, href], index) => <Link data-testid={`button-buying-path-${index}`} href={href} key={item} className="group flex w-full items-center justify-between border-b border-[hsl(var(--border))] py-4 text-left text-sm font-bold transition hover:border-[hsl(var(--accent))]"><span className="flex items-center gap-4"><span className="font-mono text-xs text-[hsl(var(--accent))]">0{index + 1}</span>{item}</span><ArrowDownRight size={18} className="text-[hsl(var(--muted-foreground))] transition group-hover:translate-x-1 group-hover:translate-y-1 group-hover:text-[hsl(var(--accent))]" /></Link>)}
+            {[['The 10 best boats for beginners', `/topic/buying/${slugify(beginnerBoatGuide.title)}`], ['The boat buyer’s field guide', `/topic/buying/${slugify(buyerFieldGuide.title)}`], ['Shop the Boatline shortlist', '/buying']].map(([item, href], index) => <Link data-testid={`button-buying-path-${index}`} href={href} key={item} className="group flex w-full items-center justify-between border-b border-[hsl(var(--border))] py-4 text-left text-sm font-bold transition hover:border-[hsl(var(--accent))]"><span className="flex items-center gap-4"><span className="font-mono text-xs text-[hsl(var(--accent))]">0{index + 1}</span>{item}</span><ArrowDownRight size={18} className="text-[hsl(var(--muted-foreground))] transition group-hover:translate-x-1 group-hover:translate-y-1 group-hover:text-[hsl(var(--accent))]" /></Link>)}
           </div>
         </div>
         <div className="relative min-h-[460px] overflow-hidden rounded-2xl bg-[hsl(var(--secondary))] image-zoom">
@@ -880,7 +879,7 @@ function GearGuide() {
              </div>
           </article>)}
         </div>
-        <div className="mt-4 flex items-center justify-between rounded-xl border border-dashed border-[hsl(var(--border))] px-5 py-4 text-xs text-[hsl(var(--muted-foreground))]"><span>Our gear desk is reader-supported. When you buy through a link, we may earn a commission.</span><span className="hidden font-mono md:inline">LM / PICKS / 24</span></div>
+        <div className="mt-4 flex items-center justify-between rounded-xl border border-dashed border-[hsl(var(--border))] px-5 py-4 text-xs text-[hsl(var(--muted-foreground))]"><span>Our gear desk is reader-supported. When you buy through a link, we may earn a commission.</span><span className="hidden font-mono md:inline">BL / PICKS / 24</span></div>
       </div>
     </section>
   );
@@ -905,7 +904,7 @@ function Dispatches() {
         </div>
          <aside id="reader-log" className="rounded-2xl bg-[hsl(var(--primary))] p-7 text-white lg:p-9">
           <div className="flex items-center justify-between"><span className="fine-label text-[hsl(var(--accent))]">Reader's log</span><Fish size={19} className="text-[hsl(var(--accent))]" /></div>
-           <h3 className="display-font mt-20 text-4xl leading-none">Share your boat story with Lyman Marine.</h3>
+           <h3 className="display-font mt-20 text-4xl leading-none">Share your boat story with Boatline.</h3>
             <div className="mt-8 border-t border-white/20 pt-5"><p className="text-sm leading-relaxed text-white/65">Send us a launch story, maintenance lesson, fishing report, or favorite destination.</p><Link data-testid="button-share-dispatch" href="/community" className="mt-6 inline-flex items-center gap-2 rounded-full bg-[hsl(var(--accent))] px-4 py-2.5 text-sm font-bold text-white">Submit a story <ArrowRight size={15} /></Link></div>
         </aside>
       </div>
@@ -926,7 +925,7 @@ function GuideSpotlight() {
             <SafeImage src="/boats/pontoon.jpeg" alt="A pontoon boat moving smoothly on calm lake water" className="absolute inset-0 h-full w-full object-cover opacity-75" />
             <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(8,28,42,.95),rgba(8,28,42,.05)_70%)]" />
             <div className="relative flex h-full flex-col justify-end p-6 lg:p-9">
-              <span className="fine-label text-[hsl(var(--accent))]">Lyman Marine / Buying desk</span>
+              <span className="fine-label text-[hsl(var(--accent))]">Boatline / Buying desk</span>
               <h3 className="display-font mt-3 max-w-xl text-3xl leading-[.95] tracking-[-.03em] sm:text-4xl md:text-5xl">
                 {beginnerBoatGuide.mainTitle}
                 <span className="mt-2 block text-lg font-normal tracking-normal text-white/80 sm:text-xl md:text-2xl">
@@ -1012,7 +1011,7 @@ function Newsletter() {
   return (
     <section id="community" className="bg-[hsl(var(--accent))] py-16 text-[hsl(var(--accent-foreground))] lg:py-20">
       <div className="mx-auto grid max-w-[1320px] items-center gap-8 px-5 md:grid-cols-[1.1fr_.9fr] lg:px-10">
-        <div><div className="flex items-center gap-3"><Waves size={19} /><span className="fine-label">The Lyman tide report</span></div><h2 className="display-font mt-4 max-w-xl text-4xl leading-[.96] tracking-[-.03em] md:text-5xl">Get practical boating advice each Friday.</h2><p className="mt-4 max-w-lg text-sm leading-relaxed text-white/75">One useful story, one piece of gear, and one boating destination delivered to your inbox.</p></div>
+        <div><div className="flex items-center gap-3"><Waves size={19} /><span className="fine-label">The Boatline tide report</span></div><h2 className="display-font mt-4 max-w-xl text-4xl leading-[.96] tracking-[-.03em] md:text-5xl">Get practical boating advice each Friday.</h2><p className="mt-4 max-w-lg text-sm leading-relaxed text-white/75">One useful story, one piece of gear, and one boating destination delivered to your inbox.</p></div>
         <div>{submitted ? <div className="rounded-2xl border border-white/35 bg-white/10 p-6"><Check size={22} /><h3 className="display-font mt-4 text-2xl">You're on the list.</h3><p className="mt-2 text-sm text-white/75">We'll meet you in your inbox this Friday.</p></div> : <form onSubmit={handleSubmit} className="rounded-2xl bg-[hsl(var(--primary))] p-3 shadow-[var(--shadow-lift)]"><label htmlFor="newsletter-email" className="sr-only">Email address</label><div className="flex gap-2"><input data-testid="input-newsletter-email" id="newsletter-email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Your email address" disabled={isSubmitting} className="min-w-0 flex-1 rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/45 focus:ring-2 focus:ring-[hsl(var(--accent))]" /><button data-testid="button-newsletter-submit" disabled={isSubmitting} className="rounded-xl bg-[hsl(var(--accent))] px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-50">{isSubmitting ? 'Joining...' : 'Subscribe'}</button></div><p className="px-2 pt-3 text-[10px] text-white/45">No noise. Unsubscribe anytime. We respect your wake.</p></form>}</div>
       </div>
     </section>
@@ -1020,24 +1019,81 @@ function Newsletter() {
 }
 
 function Footer() {
+  const [deskOpen, setDeskOpen] = useState(false);
+  const [, setLocation] = useLocation();
+
   return (
-    <footer id="lifestyle" className="bg-[hsl(var(--primary))] px-5 pb-8 pt-16 text-white lg:px-10">
-      <div className="mx-auto max-w-[1320px]">
-        <div className="grid gap-10 border-b border-white/15 pb-12 md:grid-cols-[1.4fr_.8fr_.8fr]">
-          <div><div className="flex items-center gap-3"><Mark /><span className="display-font text-xl">LYMAN MARINE</span></div><p className="mt-5 max-w-sm text-sm leading-relaxed text-white/55">A trusted field guide for the American boating life. Made on the coast, read everywhere.</p><div className="mt-6 flex gap-2"><button data-testid="social-instagram" className="rounded-full border border-white/20 p-2.5 hover:bg-white/10" aria-label="Instagram"><Instagram size={15} /></button><button data-testid="social-youtube" className="rounded-full border border-white/20 p-2.5 hover:bg-white/10" aria-label="YouTube"><Youtube size={15} /></button><a data-testid="social-facebook" href="https://www.facebook.com/share/1Ex7E9Vhwa/" target="_blank" rel="noreferrer" className="rounded-full border border-white/20 p-2.5 hover:bg-white/10" aria-label="Facebook"><Facebook size={15} /></a><button data-testid="social-linkedin" className="rounded-full border border-white/20 p-2.5 hover:bg-white/10" aria-label="LinkedIn"><Linkedin size={15} /></button></div></div>
-          <div><span className="fine-label text-[hsl(var(--accent))]">Explore</span><div className="mt-4 grid gap-3 text-sm text-white/65">{quickLinks.slice(0, 4).map(({ label, id, path }) => <Link data-testid={`footer-link-${id}`} href={path} key={id} className="text-left transition hover:text-white">{label}</Link>)}</div></div>
-          <div><span className="fine-label text-[hsl(var(--accent))]">Lyman Marine</span><div className="mt-4 grid gap-3 text-sm text-white/65"><Link href="/about" data-testid="footer-link-about" className="text-left hover:text-white">About the desk</Link><Link href="/contact" data-testid="footer-link-contact" className="text-left hover:text-white">Contact the editors</Link><Link href="/partner" data-testid="footer-link-advertise" className="text-left hover:text-white">Partner with us</Link></div></div>
+    <>
+      <footer id="lifestyle" className="bg-[hsl(var(--primary))] px-5 pb-8 pt-16 text-white lg:px-10">
+        <div className="mx-auto max-w-[1320px]">
+          <div className="grid gap-10 border-b border-white/15 pb-12 md:grid-cols-[1.4fr_.8fr_.8fr]">
+            <div>
+              <div className="flex items-center gap-3">
+                <Mark />
+                <span className="display-font text-xl">BOATLINE</span>
+              </div>
+              <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/55">
+                A trusted field guide for the American boating life. Made on the coast, read everywhere.
+              </p>
+              <div className="mt-6 flex gap-2">
+                <button data-testid="social-instagram" className="rounded-full border border-white/20 p-2.5 hover:bg-white/10" aria-label="Instagram"><Instagram size={15} /></button>
+                <button data-testid="social-youtube" className="rounded-full border border-white/20 p-2.5 hover:bg-white/10" aria-label="YouTube"><Youtube size={15} /></button>
+                <a data-testid="social-facebook" href="https://www.facebook.com/share/1Ex7E9Vhwa/" target="_blank" rel="noreferrer" className="rounded-full border border-white/20 p-2.5 hover:bg-white/10" aria-label="Facebook"><Facebook size={15} /></a>
+                <button data-testid="social-linkedin" className="rounded-full border border-white/20 p-2.5 hover:bg-white/10" aria-label="LinkedIn"><Linkedin size={15} /></button>
+              </div>
+            </div>
+            <div>
+              <span className="fine-label text-[hsl(var(--accent))]">Explore</span>
+              <div className="mt-4 grid gap-3 text-sm text-white/65">
+                {quickLinks.slice(0, 4).map(({ label, id, path }) => (
+                  <Link data-testid={`footer-link-${id}`} href={path} key={id} className="text-left transition hover:text-white">
+                    {label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+            <div>
+              <span className="fine-label text-[hsl(var(--accent))]">Boatline</span>
+              <div className="mt-4 grid gap-3 text-sm text-white/65">
+                <Link href="/about" data-testid="footer-link-about" className="text-left hover:text-white">About the desk</Link>
+                <Link href="/contact" data-testid="footer-link-contact" className="text-left hover:text-white">Contact the editors</Link>
+                <Link href="/partner" data-testid="footer-link-advertise" className="text-left hover:text-white">Partner with us</Link>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col items-center justify-between gap-4 pt-6 text-[10px] uppercase tracking-[.13em] text-white/35 sm:flex-row">
+            <span>© Boatline Co.</span>
+            <button
+              type="button"
+              onClick={() => setDeskOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1 font-medium text-white/60 transition hover:border-white/35 hover:bg-white/5 hover:text-white"
+            >
+              <ShieldCheck size={12} className="text-[hsl(var(--accent))]" />
+              <span>Editorial Desk</span>
+            </button>
+            <span>Made for the long way around</span>
+          </div>
         </div>
-        <div className="flex flex-col justify-between gap-3 pt-6 text-[10px] uppercase tracking-[.13em] text-white/35 sm:flex-row"><span>© Lyman Marine Co.</span><span>Made for the long way around</span></div>
-      </div>
-    </footer>
+      </footer>
+
+      {deskOpen && (
+        <EditorialReviewModal
+          isOpen={deskOpen}
+          onClose={() => setDeskOpen(false)}
+          onOpenStory={(id) => {
+            setDeskOpen(false);
+            setLocation(`/community/story/${id}`);
+          }}
+        />
+      )}
+    </>
   );
 }
 
 function Home() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [saved, setSaved] = useState<string[]>([]);
-  useEffect(() => { document.title = 'Lyman Marine — The boating life, from every angle.'; }, []);
+  useEffect(() => { document.title = 'Boatline — The boating life, from every angle.'; }, []);
   const toggleSave = (id: string) => setSaved((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id]);
   return (
     <div className="paper-grain min-h-screen overflow-hidden">
@@ -1245,7 +1301,7 @@ const pageResources: Record<string, ResourceCard[]> = {
 
 function InteriorPage({ eyebrow, title, copy, heroImage, children }: { eyebrow: string; title: string; copy: string; heroImage: string; children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
-  useEffect(() => { document.title = `${title} — Lyman Marine`; }, [title]);
+  useEffect(() => { document.title = `${title} — Boatline`; }, [title]);
   return (
     <div className="paper-grain min-h-screen overflow-hidden">
       <Header solid onSearch={() => setSearchOpen(true)} />
@@ -1299,7 +1355,7 @@ function ResourcePage({ kind, eyebrow, title, copy, heroImage }: { kind: keyof t
         <div className="mb-8 flex items-center justify-between border-b border-[hsl(var(--border))] pb-5"><span className="fine-label text-[hsl(var(--accent))]">Latest dispatches</span><span className="font-mono text-xs text-[hsl(var(--muted-foreground))]">{String(resources.length).padStart(2, '0')} stories</span></div>
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">{resources.map((card) => <ResourceCard key={card.title} kind={kind} card={card} />)}</div>
       </section>
-      <section className="bg-[hsl(var(--muted))] px-5 py-14 lg:px-10"><div className="mx-auto flex max-w-[1320px] flex-col justify-between gap-5 rounded-2xl border border-dashed border-[hsl(var(--border))] p-6 md:flex-row md:items-center md:p-8"><div><span className="fine-label text-[hsl(var(--accent))]">The Lyman tide report</span><h2 className="display-font mt-2 text-3xl text-[hsl(var(--primary))]">One smart note for the week ahead.</h2></div><Link href="/#community" className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-white">Join the list <ArrowRight size={15} /></Link></div></section>
+      <section className="bg-[hsl(var(--muted))] px-5 py-14 lg:px-10"><div className="mx-auto flex max-w-[1320px] flex-col justify-between gap-5 rounded-2xl border border-dashed border-[hsl(var(--border))] p-6 md:flex-row md:items-center md:p-8"><div><span className="fine-label text-[hsl(var(--accent))]">The Boatline tide report</span><h2 className="display-font mt-2 text-3xl text-[hsl(var(--primary))]">One smart note for the week ahead.</h2></div><Link href="/#community" className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-white">Join the list <ArrowRight size={15} /></Link></div></section>
     </InteriorPage>
   );
 }
@@ -1484,7 +1540,7 @@ function BuyerFieldGuideBody() {
 }
 
 function BeginnerGuidePage() {
-  useEffect(() => { document.title = `${beginnerBoatGuide.title} — Lyman Marine`; }, []);
+  useEffect(() => { document.title = `${beginnerBoatGuide.title} — Boatline`; }, []);
   return (
     <ArticleLayout>
       <article className="mx-auto max-w-[980px] px-5 py-12 lg:px-10 lg:py-20">
@@ -1497,7 +1553,10 @@ function BeginnerGuidePage() {
         </h1>
         <p className="mt-7 max-w-3xl text-lg leading-relaxed text-[hsl(var(--muted-foreground))] md:text-xl">{beginnerBoatGuide.copy} We ranked the formats by how quickly a new owner can feel comfortable, what they ask of a real-world budget, and how much good time they make possible.</p>
         <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-y border-[hsl(var(--border))] py-5 text-xs text-[hsl(var(--muted-foreground))]">
-          <span>Lyman Marine buying desk</span>
+          <div className="flex items-center gap-2">
+            <BoatlineBoatLogo variant="pfp" size={26} />
+            <span className="font-semibold text-[hsl(var(--primary))]">Boatline buying desk</span>
+          </div>
           <span>Updated for the coming season · 14 min read</span>
         </div>
         <div className="mt-10 overflow-hidden rounded-2xl bg-[hsl(var(--primary))] shadow-sm">
@@ -1510,7 +1569,7 @@ function BeginnerGuidePage() {
 }
 
 function BuyerFieldGuidePage() {
-  useEffect(() => { document.title = `${buyerFieldGuide.title} — Lyman Marine`; }, []);
+  useEffect(() => { document.title = `${buyerFieldGuide.title} — Boatline`; }, []);
   return (
     <ArticleLayout>
       <article className="mx-auto max-w-[980px] px-5 py-12 lg:px-10 lg:py-20">
@@ -1518,7 +1577,10 @@ function BuyerFieldGuidePage() {
         <h1 className="display-font max-w-4xl text-5xl leading-[.91] tracking-[-.05em] text-[hsl(var(--primary))] md:text-7xl">{buyerFieldGuide.title}</h1>
         <p className="mt-7 max-w-3xl text-lg leading-relaxed text-[hsl(var(--muted-foreground))] md:text-xl">{buyerFieldGuide.copy} Keep it open while you compare boats, talk with sellers, and inspect the details that brochures leave out.</p>
         <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-y border-[hsl(var(--border))] py-5 text-xs text-[hsl(var(--muted-foreground))]">
-          <span>Lyman Marine buying desk</span>
+          <div className="flex items-center gap-2">
+            <BoatlineBoatLogo variant="pfp" size={26} />
+            <span className="font-semibold text-[hsl(var(--primary))]">Boatline buying desk</span>
+          </div>
           <span>Updated for the coming season · 8 min read</span>
         </div>
         <div className="mt-10 overflow-hidden rounded-2xl bg-[hsl(var(--primary))]">
@@ -1562,8 +1624,8 @@ function ResourceStoryPage() {
         <div className="mb-8 flex items-center gap-3 text-[hsl(var(--accent))]"><span className="h-px w-12 bg-[hsl(var(--accent))]" /><span className="fine-label">{card.category}</span></div>
         <h1 className="display-font max-w-4xl text-5xl leading-[.93] tracking-[-.045em] text-[hsl(var(--primary))] md:text-7xl">{card.title}</h1>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[hsl(var(--muted-foreground))] md:text-xl">{card.copy}</p>
-        <div className="mt-8 flex items-center justify-between border-y border-[hsl(var(--border))] py-5 text-xs text-[hsl(var(--muted-foreground))]"><span>{card.source ?? 'Lyman Marine field notes'}</span><span>{card.externalUrl ? 'External reading' : 'Lyman Marine'}</span></div>
-        <div className="prose prose-lg mt-10 max-w-none text-[hsl(var(--foreground))]"><p className="display-font text-3xl leading-tight text-[hsl(var(--primary))]">The useful version starts with the details that hold up after the launch ramp.</p><p>{card.copy} This guide is part of the Lyman Marine desk, built to help owners make a clearer decision before the next day on the water.</p><p>Keep this page bookmarked as the desk grows. We will add deeper checklists, interviews, product comparisons, and local knowledge here as the editorial library fills out.</p></div>
+        <div className="mt-8 flex items-center justify-between border-y border-[hsl(var(--border))] py-5 text-xs text-[hsl(var(--muted-foreground))]"><span>{card.source ?? 'Boatline field notes'}</span><span>{card.externalUrl ? 'External reading' : 'Boatline'}</span></div>
+        <div className="prose prose-lg mt-10 max-w-none text-[hsl(var(--foreground))]"><p className="display-font text-3xl leading-tight text-[hsl(var(--primary))]">The useful version starts with the details that hold up after the launch ramp.</p><p>{card.copy} This guide is part of the Boatline desk, built to help owners make a clearer decision before the next day on the water.</p><p>Keep this page bookmarked as the desk grows. We will add deeper checklists, interviews, product comparisons, and local knowledge here as the editorial library fills out.</p></div>
         <div className="mt-10 flex flex-wrap gap-3"><Link href={`/${kind}`} className="inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-white">Back to {kind} <ArrowRight size={15} /></Link>{card.externalUrl && <a href={card.externalUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] px-5 py-3 text-sm font-bold text-[hsl(var(--primary))]">Read the original <ArrowRight size={15} /></a>}</div>
       </article>
     </ArticleLayout>
@@ -1599,8 +1661,14 @@ function StoryPage() {
         <div className="mb-8 flex items-center gap-3 text-[hsl(var(--accent))]"><span className="h-px w-12 bg-[hsl(var(--accent))]" /><span className="fine-label">{article.category}</span></div>
         <h1 className="display-font max-w-4xl text-5xl leading-[.93] tracking-[-.045em] text-[hsl(var(--primary))] md:text-7xl">{article.title}</h1>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-[hsl(var(--muted-foreground))] md:text-xl">{article.excerpt}</p>
-        <div className="mt-8 flex items-center justify-between border-y border-[hsl(var(--border))] py-5 text-xs text-[hsl(var(--muted-foreground))]"><span>{article.author}</span><span>{article.date}</span></div>
-        <div className="prose prose-lg mt-10 max-w-none text-[hsl(var(--foreground))]"><p className="display-font text-3xl leading-tight text-[hsl(var(--primary))]">The useful version starts with the details that hold up after the launch ramp.</p><p>{article.excerpt} Lyman Marine brings the practical context, the questions worth asking, and the small decisions that make time on the water feel more considered.</p><p>Whether you are checking an engine, comparing a helm, planning a fishing day, or simply looking for a better route home, the goal is the same: know more before you go farther.</p><p className="font-semibold text-[hsl(var(--primary))]">This is an editorial preview. More full-length guides are coming to the Lyman Marine desk soon.</p></div>
+        <div className="mt-8 flex items-center justify-between border-y border-[hsl(var(--border))] py-5 text-xs text-[hsl(var(--muted-foreground))]">
+          <div className="flex items-center gap-2.5">
+            <BoatlineBoatLogo variant="pfp" size={28} />
+            <span className="font-semibold text-[hsl(var(--primary))]">{article.author}</span>
+          </div>
+          <span>{article.date}</span>
+        </div>
+        <div className="prose prose-lg mt-10 max-w-none text-[hsl(var(--foreground))]"><p className="display-font text-3xl leading-tight text-[hsl(var(--primary))]">The useful version starts with the details that hold up after the launch ramp.</p><p>{article.excerpt} Boatline brings the practical context, the questions worth asking, and the small decisions that make time on the water feel more considered.</p><p>Whether you are checking an engine, comparing a helm, planning a fishing day, or simply looking for a better route home, the goal is the same: know more before you go farther.</p><p className="font-semibold text-[hsl(var(--primary))]">This is an editorial preview. More full-length guides are coming to the Boatline desk soon.</p></div>
         <Link href="/" className="mt-10 inline-flex items-center gap-2 border-b border-[hsl(var(--accent))] pb-2 text-sm font-bold text-[hsl(var(--primary))]">Back to the magazine <ArrowRight size={15} /></Link>
       </article>
     </ArticleLayout>
@@ -1679,7 +1747,7 @@ function ArticleInlineImage({
 }
 
 function BoatMaintenanceArticle({ article }: { article: typeof articles[number] }) {
-  useEffect(() => { document.title = `${article.title} — Lyman Marine`; }, [article.title]);
+  useEffect(() => { document.title = `${article.title} — Boatline`; }, [article.title]);
   return (
     <ArticleLayout>
       <article className="mx-auto max-w-[1040px] px-5 py-12 lg:px-10 lg:py-20">
@@ -1693,7 +1761,13 @@ function BoatMaintenanceArticle({ article }: { article: typeof articles[number] 
           )}
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-[hsl(var(--muted-foreground))] md:text-xl">{article.excerpt}</p>
           <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-y border-[hsl(var(--border))] py-5 text-xs text-[hsl(var(--muted-foreground))]">
-            <span>{article.author}</span>
+            <div className="flex items-center gap-2.5">
+              <BoatlineBoatLogo variant="pfp" size={32} />
+              <div>
+                <span className="font-semibold text-[hsl(var(--primary))] block">{article.author}</span>
+                <span className="text-[11px] text-[hsl(var(--muted-foreground))]">Boatline Editorial Desk</span>
+              </div>
+            </div>
             <span>{article.readTime} · {article.date}</span>
           </div>
           <div className="mt-10 overflow-hidden rounded-2xl bg-[hsl(var(--primary))]">
@@ -2029,17 +2103,33 @@ function BoatMaintenanceArticle({ article }: { article: typeof articles[number] 
 
 function InfoPage({ kind }: { kind: 'about' | 'contact' | 'partner' }) {
   const content = {
-    about: { eyebrow: 'The desk', title: 'Built for better days on the water.', copy: 'Lyman Marine is a field guide for the American boating life — practical, curious, and made for people who would rather be learning at the dock than talking over your head.', heroImage: images.hero },
-    contact: { eyebrow: 'Say hello', title: 'Bring us a story worth telling.', copy: 'Have a launch story, maintenance lesson, product tip, or place we should know about? The Lyman desk is listening.', heroImage: images.fishing },
-    partner: { eyebrow: 'Work with Lyman', title: 'Good partners belong on the water too.', copy: 'Our partner and sponsorship desk is coming soon. We are building thoughtful ways for marine brands to reach a curious, engaged audience.', heroImage: images.marina },
+    about: { eyebrow: 'The desk', title: 'Built for better days on the water.', copy: 'Boatline is a field guide for the American boating life — practical, curious, and made for people who would rather be learning at the dock than talking over your head.', heroImage: images.hero },
+    contact: { eyebrow: 'Say hello', title: 'Bring us a story worth telling.', copy: 'Have a launch story, maintenance lesson, product tip, or place we should know about? The Boatline desk is listening.', heroImage: images.fishing },
+    partner: { eyebrow: 'Work with Boatline', title: 'Good partners belong on the water too.', copy: 'Our partner and sponsorship desk is coming soon. We are building thoughtful ways for marine brands to reach a curious, engaged audience.', heroImage: images.marina },
   }[kind];
-  return <InteriorPage {...content}><section className="mx-auto max-w-[760px] px-5 py-20 text-center lg:py-28"><p className="text-lg leading-relaxed text-[hsl(var(--muted-foreground))]">Lyman Marine is growing slowly and intentionally. More ways to contribute, collaborate, and stay close to the community are on the way.</p><Link href="/" className="mt-9 inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-white">Return home <ArrowRight size={15} /></Link></section></InteriorPage>;
+  return <InteriorPage {...content}><section className="mx-auto max-w-[760px] px-5 py-20 text-center lg:py-28"><p className="text-lg leading-relaxed text-[hsl(var(--muted-foreground))]">Boatline is growing slowly and intentionally. More ways to contribute, collaborate, and stay close to the community are on the way.</p><Link href="/" className="mt-9 inline-flex items-center gap-2 rounded-full bg-[hsl(var(--primary))] px-5 py-3 text-sm font-bold text-white">Return home <ArrowRight size={15} /></Link></section></InteriorPage>;
+}
+
+function AdminRoutePage() {
+  const [, setLocation] = useLocation();
+  return (
+    <div className="min-h-screen bg-[hsl(var(--background))]">
+      <EditorialReviewModal
+        isOpen={true}
+        onClose={() => setLocation('/')}
+        onOpenStory={(id) => setLocation(`/community/story/${id}`)}
+      />
+    </div>
+  );
 }
 
 function Router() {
   return (
     <RoutedErrorBoundary>
       <Switch>
+        <Route path="/admin" component={AdminRoutePage} />
+        <Route path="/editorial" component={AdminRoutePage} />
+        <Route path="/editorial-desk" component={AdminRoutePage} />
         <Route path="/marketplace/:rest*" component={MarketplaceApp} />
         <Route path="/marketplace" component={MarketplaceApp} />
         <Route path="/" component={Home} />

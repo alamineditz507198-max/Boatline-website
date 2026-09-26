@@ -66,22 +66,6 @@ export function FromTheWaterSection({ limit = 6, showViewAll = true }: FromTheWa
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          {/* Moderation Desk Pill Button */}
-          <button
-            type="button"
-            onClick={() => setIsReviewOpen(true)}
-            className="group inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-4 py-2.5 text-xs font-semibold text-[hsl(var(--muted-foreground))] transition hover:border-[hsl(var(--accent))] hover:text-[hsl(var(--foreground))]"
-            title="Open editorial moderation desk to review submitted stories"
-          >
-            <ShieldCheck size={15} className="text-[hsl(var(--accent))]" />
-            <span>Editorial Desk</span>
-            {pendingStories.length > 0 && (
-              <span className="rounded-full bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-600">
-                {pendingStories.length} pending
-              </span>
-            )}
-          </button>
-
           {/* Share Your Story Button */}
           <button
             type="button"
@@ -262,12 +246,12 @@ export function FromTheWaterSection({ limit = 6, showViewAll = true }: FromTheWa
       {/* Bottom bar with Call to Action & Navigation */}
       <div className="mt-14 flex flex-col items-center justify-between gap-6 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-7 shadow-sm sm:flex-row sm:p-8">
         <div>
-          <span className="fine-label text-[hsl(var(--accent))]">Lyman Marine Reader Submissions</span>
+          <span className="fine-label text-[hsl(var(--accent))]">Boatline Reader Submissions</span>
           <h3 className="display-font mt-1 text-2xl text-[hsl(var(--primary))] sm:text-3xl">
             Have a boating moment or field note to share?
           </h3>
           <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">
-            From first launches to restoration journeys, your story belongs in the Lyman Marine archive.
+            From first launches to restoration journeys, your story belongs in the Boatline archive.
           </p>
         </div>
 
