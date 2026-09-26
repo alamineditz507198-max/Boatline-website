@@ -49,6 +49,7 @@ import { CommunityStoryDetailPage } from '@/components/CommunityStoryDetailPage'
 import { UsedBoatBuyingGuideArticle } from '@/components/UsedBoatBuyingGuideArticle';
 import { ReadTheWaterArticle } from '@/components/ReadTheWaterArticle';
 import { BoatlineBoatLogo } from '@/components/BoatlineBoatLogo';
+import { AdSenseSlot } from '@/components/AdSenseSlot';
 import { MarketplaceApp } from '@/marketplace/MarketplaceApp';
 import { subscribeNewsletter } from '@/lib/community-store';
 
@@ -1102,7 +1103,9 @@ function Home() {
       <EditionStrip />
       <main>
         <LatestStories saved={saved} onSave={toggleSave} />
-        <div className="mx-auto max-w-[1320px] px-5 lg:px-10"><div className="rounded-xl border border-dashed border-[hsl(var(--border))] px-4 py-3 text-center fine-label text-[hsl(var(--muted-foreground))]">Advertisement · A quiet place for a good partner</div></div>
+        <div className="mx-auto max-w-[1320px] px-5 lg:px-10">
+          <AdSenseSlot slotId="1733624695" />
+        </div>
         <GuideSpotlight />
         <FieldNotes />
         <MagazineMosaic />
