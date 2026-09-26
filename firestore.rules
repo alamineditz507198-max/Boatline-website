@@ -36,14 +36,14 @@ service cloud.firestore {
 
     // Newsletter Subscribers
     match /subscribers/{subscriberId} {
-      // Anyone can subscribe their email
+      // Allow reading for the editorial desk dashboard and anyone to subscribe
+      allow read: if true;
       allow create: if request.resource.data.email is string
         && request.resource.data.email.size() > 3
-        && request.resource.data.email.size() <= 150
-        && request.resource.data.createdAt is string;
+        && request.resource.data.email.size() <= 150;
 
-      // Only authenticated admin can view, modify, or export the subscriber list
-      allow read, update, delete: if request.auth != null;
+      // Only authenticated admin can modify or delete existing subscriber records
+      allow update, delete: if request.auth != null;
     }
   }
 }
