@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface AdSenseSlotProps {
   slotId?: string;
@@ -30,34 +30,56 @@ export function AdSenseSlot({
   label = true,
 }: AdSenseSlotProps) {
   const adRef = useRef<HTMLModElement | null>(null);
-  const pushedRef = useRef(false);
+  const [adStatus, setAdStatus] = useState<'loading' | 'unfilled' | 'filled'>('loading');
+  const [isLiveDomain, setIsLiveDomain] = useState(false);
 
   useEffect(() => {
-    if (pushedRef.current) return;
+    if (typeof window === 'undefined') return;
 
-    try {
-      if (typeof window !== 'undefined' && adRef.current) {
-        // Check if ad was already requested/filled to prevent AdSense error: "All 'ins' elements in the DOM with class=adsbygoogle already have ads in them."
-        const alreadyFilled = adRef.current.getAttribute('data-adsbygoogle-status');
-        if (!alreadyFilled) {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-          pushedRef.current = true;
+    const hostname = window.location.hostname;
+    const isProd = hostname.includes('boatline.cyou');
+    setIsLiveDomain(isProd);
+
+    // Give the DOM element a moment to measure layout width before calling adsbygoogle
+    const timer = setTimeout(() => {
+      try {
+        if (adRef.current) {
+          const currentStatus = adRef.current.getAttribute('data-adsbygoogle-status');
+          const adStatusAttr = adRef.current.getAttribute('data-ad-status');
+
+          if (!currentStatus) {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+          }
+
+          // Check if ad was filled or unfilled by AdSense
+          setTimeout(() => {
+            if (adRef.current) {
+              const updatedStatus = adRef.current.getAttribute('data-ad-status');
+              if (updatedStatus === 'unfilled') {
+                setAdStatus('unfilled');
+              } else if (adRef.current.querySelector('iframe')) {
+                setAdStatus('filled');
+              }
+            }
+          }, 1500);
         }
+      } catch (err) {
+        console.debug('AdSense slot initialization:', err);
       }
-    } catch (err) {
-      console.debug('AdSense request error:', err);
-    }
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, [clientId, slotId]);
 
   return (
     <div className={`my-8 flex flex-col items-center justify-center overflow-hidden ${className}`}>
       {label && (
-        <span className="mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-[hsl(var(--muted-foreground))] opacity-60">
+        <span className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-[hsl(var(--muted-foreground))] opacity-60">
           Advertisement
         </span>
       )}
-      <div className="w-full max-w-[1200px] overflow-hidden rounded-xl border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/60 p-2 shadow-sm flex justify-center min-h-[100px]">
-        {/* Home_top AdSense Unit */}
+      <div className="relative w-full max-w-[1200px] overflow-hidden rounded-xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))] p-3 shadow-sm min-h-[110px] flex items-center justify-center">
+        {/* Google AdSense Unit */}
         <ins
           ref={adRef}
           className="adsbygoogle w-full"
@@ -67,6 +89,19 @@ export function AdSenseSlot({
           data-ad-format={format}
           data-full-width-responsive={responsive ? 'true' : 'false'}
         />
+
+        {/* Development & Staging Domain Notice when AdSense returns unfilled */}
+        {!isLiveDomain && adStatus !== 'filled' && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-[hsl(var(--muted))]/70 p-4 text-center backdrop-blur-xs pointer-events-none">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[hsl(var(--primary))]">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Google AdSense Slot Ready (Slot #{slotId})</span>
+            </div>
+            <p className="mt-1 text-[11px] text-[hsl(var(--muted-foreground))] max-w-md">
+              Live ads are active and will display on your verified production domain (<strong>boatline.cyou</strong>). In development/preview URLs, Google AdSense holds live inventory until loaded on the approved domain.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
