@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { useParams, Link } from 'wouter';
 import { ArrowLeft, ArrowRight, MapPin, Calendar, User, Share2, ShipWheel, Check, Bookmark, Sparkles } from 'lucide-react';
 import { useCommunityStories } from '@/lib/community-store';
+import { AdSenseSlot } from '@/components/AdSenseSlot';
 
 export function CommunityStoryDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -133,13 +134,24 @@ export function CommunityStoryDetailPage() {
       {/* Full story prose */}
       <div className="prose prose-lg max-w-none space-y-6 text-base leading-relaxed text-[hsl(var(--foreground))] md:text-lg">
         {paragraphs.map((para, index) => (
-          <p
-            key={index}
-            className={index === 0 ? 'first-letter:float-left first-letter:mr-3 first-letter:text-5xl first-letter:font-serif first-letter:font-bold first-letter:leading-none first-letter:text-[hsl(var(--primary))]' : ''}
-          >
-            {para}
-          </p>
+          <Fragment key={index}>
+            <p
+              className={index === 0 ? 'first-letter:float-left first-letter:mr-3 first-letter:text-5xl first-letter:font-serif first-letter:font-bold first-letter:leading-none first-letter:text-[hsl(var(--primary))]' : ''}
+            >
+              {para}
+            </p>
+            {index === 1 && paragraphs.length > 2 && (
+              <div className="not-prose my-8">
+                <AdSenseSlot slotId="9336782545" />
+              </div>
+            )}
+          </Fragment>
         ))}
+        {paragraphs.length <= 2 && (
+          <div className="not-prose my-8">
+            <AdSenseSlot slotId="9336782545" />
+          </div>
+        )}
       </div>
 
       {/* Additional submitted photos */}

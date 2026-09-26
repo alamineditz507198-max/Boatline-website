@@ -1409,6 +1409,10 @@ function BeginnerGuideBody() {
           </section>
         ))}
       </div>
+      
+      {/* In-Article Sponsorship Unit */}
+      <AdSenseSlot slotId="9336782545" className="my-10" />
+
       <section>
         <div className="mb-5 flex items-center gap-3 text-[hsl(var(--accent))]"><span className="h-px w-10 bg-[hsl(var(--accent))]" /><span className="fine-label">At a glance</span></div>
         <h2 className="display-font text-3xl text-[hsl(var(--primary))] md:text-4xl">Which boat fits your lifestyle?</h2>
@@ -1529,6 +1533,10 @@ function BuyerFieldGuideBody() {
           </article>
         </div>
       </section>
+      
+      {/* In-Article Sponsorship Unit */}
+      <AdSenseSlot slotId="9336782545" className="my-10" />
+
       <section className="rounded-2xl bg-[hsl(var(--primary))] p-6 text-white lg:p-8">
         <span className="fine-label text-[hsl(var(--accent))]">Research notes</span>
         <p className="mt-3 text-sm leading-relaxed text-white/70">This field guide is based on the supplied research from BoatUS, marine brokers, Boat Trader, Boat Country, Boating Magazine, and owner forums. Treat the 10–15% figure and service intervals as planning ranges, not guarantees: local costs, boat type, water, climate, and maintenance history all matter.</p>
@@ -1672,7 +1680,11 @@ function StoryPage() {
           <span>{article.date}</span>
         </div>
         <div className="prose prose-lg mt-10 max-w-none text-[hsl(var(--foreground))]"><p className="display-font text-3xl leading-tight text-[hsl(var(--primary))]">The useful version starts with the details that hold up after the launch ramp.</p><p>{article.excerpt} Boatline brings the practical context, the questions worth asking, and the small decisions that make time on the water feel more considered.</p><p>Whether you are checking an engine, comparing a helm, planning a fishing day, or simply looking for a better route home, the goal is the same: know more before you go farther.</p><p className="font-semibold text-[hsl(var(--primary))]">This is an editorial preview. More full-length guides are coming to the Boatline desk soon.</p></div>
-        <Link href="/" className="mt-10 inline-flex items-center gap-2 border-b border-[hsl(var(--accent))] pb-2 text-sm font-bold text-[hsl(var(--primary))]">Back to the magazine <ArrowRight size={15} /></Link>
+        
+        {/* In-Article Sponsorship Unit */}
+        <AdSenseSlot slotId="9336782545" className="my-8" />
+
+        <Link href="/" className="mt-6 inline-flex items-center gap-2 border-b border-[hsl(var(--accent))] pb-2 text-sm font-bold text-[hsl(var(--primary))]">Back to the magazine <ArrowRight size={15} /></Link>
       </article>
     </ArticleLayout>
   );
@@ -1874,6 +1886,9 @@ function BoatMaintenanceArticle({ article }: { article: typeof articles[number] 
               </p>
             </div>
           </MaintenanceSection>
+
+          {/* In-Article Sponsorship Unit */}
+          <AdSenseSlot slotId="9336782545" className="my-10" />
 
           <MaintenanceSection number="04" title="Monthly & periodic maintenance">
             <p className="mb-5 text-base leading-relaxed">Exact intervals depend on the boat, engine, usage, climate, and manufacturer. A monthly or periodic walkaround is a useful chance to inspect the systems that daily use can make easy to overlook.</p>

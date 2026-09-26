@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
+import { AdSenseSlot } from '@/components/AdSenseSlot';
 import {
   ArrowLeft,
   ArrowRight,
@@ -577,6 +578,9 @@ export function ReadTheWaterArticle({ article }: ReadTheWaterArticleProps) {
                 <Cite num={15} />
               </p>
             </section>
+
+            {/* In-Article Ad Unit */}
+            <AdSenseSlot slotId="9336782545" className="my-10" />
 
             {/* Section 03 */}
             <section id="sec-03" className="scroll-mt-24 pt-10 border-t border-[hsl(var(--border))]">

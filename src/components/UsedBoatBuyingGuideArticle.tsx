@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { BoatlineBoatLogo } from '@/components/BoatlineBoatLogo';
+import { AdSenseSlot } from '@/components/AdSenseSlot';
 import {
   ArrowLeft,
   ArrowRight,
@@ -467,6 +468,9 @@ export function UsedBoatBuyingGuideArticle({ article }: UsedBoatBuyingGuideArtic
             </div>
           </div>
         </section>
+
+        {/* In-Article Sponsorship Unit */}
+        <AdSenseSlot slotId="9336782545" className="my-10" />
 
         {/* SECTION 4 */}
         <section id="check-4" className="mt-14 scroll-mt-20 border-t border-[hsl(var(--border))] pt-10">
