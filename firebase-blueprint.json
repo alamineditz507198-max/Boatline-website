@@ -1,0 +1,52 @@
+{
+  "entities": {
+    "Story": {
+      "title": "Community Story",
+      "description": "User submitted boat stories, restorations, and harbor dispatches",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string", "maxLength": 150 },
+        "author": { "type": "string", "maxLength": 80 },
+        "email": { "type": "string", "maxLength": 120 },
+        "boatName": { "type": "string", "maxLength": 80 },
+        "boatModel": { "type": "string", "maxLength": 80 },
+        "location": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "enum": ["restoration", "coastal-run", "harbor-life", "diy-project", "rendezvous"] },
+        "snippet": { "type": "string", "maxLength": 400 },
+        "fullStory": { "type": "string", "maxLength": 10000 },
+        "imageUrl": { "type": "string" },
+        "additionalImages": { "type": "array" },
+        "submittedAt": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "published", "rejected"] },
+        "likes": { "type": "number" },
+        "readMinutes": { "type": "number" },
+        "editorNotes": { "type": "string", "maxLength": 500 },
+        "featured": { "type": "boolean" }
+      },
+      "required": ["title", "author", "location", "category", "snippet", "fullStory", "submittedAt", "status"]
+    },
+    "Subscriber": {
+      "title": "Newsletter Subscriber",
+      "description": "Email subscriber for the Friday Boatline newsletter",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "email": { "type": "string", "maxLength": 150 },
+        "createdAt": { "type": "string" },
+        "source": { "type": "string" }
+      },
+      "required": ["email", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/stories/{storyId}": {
+      "schema": "Story",
+      "description": "Collection of community submitted boat stories"
+    },
+    "/subscribers/{subscriberId}": {
+      "schema": "Subscriber",
+      "description": "Collection of newsletter subscriber emails"
+    }
+  }
+}

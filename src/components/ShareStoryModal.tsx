@@ -78,14 +78,14 @@ export function ShareStoryModal({ isOpen, onClose, onOpenModeration }: ShareStor
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !title.trim() || !story.trim()) return;
 
     setIsSubmitting(true);
 
     try {
-      submitStory({
+      await submitStory({
         name,
         title,
         location: location.trim() || 'Coastal Waters',

@@ -47,6 +47,7 @@ import { CommunityStoryDetailPage } from '@/components/CommunityStoryDetailPage'
 import { UsedBoatBuyingGuideArticle } from '@/components/UsedBoatBuyingGuideArticle';
 import { ReadTheWaterArticle } from '@/components/ReadTheWaterArticle';
 import { MarketplaceApp } from '@/marketplace/MarketplaceApp';
+import { subscribeNewsletter } from '@/lib/community-store';
 
 const queryClient = new QueryClient();
 
@@ -532,12 +533,12 @@ function MarineConditionsPage() {
               <div className="flex items-start gap-3"><AlertTriangle size={20} className="mt-0.5 shrink-0" /><div><h2 className="display-font text-2xl">Live data is unavailable right now.</h2><p className="mt-2 text-sm">We could not retrieve a current NOAA/NWS reading for “{locationQuery}”. Nothing on this page is simulated. Try another U.S. location or refresh in a moment.</p></div></div>
             </div>
           )}
-          {data && (
+          {data && data.location && (
             <>
               <div className="flex flex-col justify-between gap-6 border-b border-[hsl(var(--border))] pb-8 md:flex-row md:items-end">
                 <div>
                   <div className="flex items-center gap-2 text-[hsl(var(--accent))]"><MapPin size={16} /><span className="fine-label">Selected boating location</span></div>
-                  <h2 className="display-font mt-3 text-4xl text-[hsl(var(--primary))] md:text-6xl">{data.location.label}</h2>
+                  <h2 className="display-font mt-3 text-4xl text-[hsl(var(--primary))] md:text-6xl">{data.location?.label || locationQuery}</h2>
                    <p className="mt-3 text-sm text-[hsl(var(--muted-foreground))]">Live reading fetched {formatTimestamp(data.fetchedAt)} · refreshes every 15 minutes while this page is open</p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -549,12 +550,12 @@ function MarineConditionsPage() {
               </div>
 
               <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <ConditionMetric label="Weather" value={formatValue(data.current.temperatureF, "°F")} detail={data.current.description ?? undefined} icon={<CloudSun size={21} />} />
-                <ConditionMetric label="Wind" value={formatValue(data.current.windMph, " mph")} detail={[data.current.windDirection, data.current.windRange ? `${data.current.windRange} mph` : null].filter(Boolean).join(" · ") || undefined} icon={<Wind size={21} />} />
-                <ConditionMetric label="Waves" value={formatValue(data.waves.heightFt, " ft")} detail={[data.waves.conditions, data.waves.periodSeconds ? `${data.waves.periodSeconds}s period` : null].filter(Boolean).join(" · ") || undefined} source={data.waves.source} icon={<Waves size={21} />} />
-                <ConditionMetric label="Water temperature" value={formatValue(data.water.temperatureF, "°F")} detail={data.water.temperatureF == null ? "No nearby NOAA reading" : "Nearby surface reading"} source={data.water.source} icon={<Thermometer size={21} />} />
+                <ConditionMetric label="Weather" value={formatValue(data.current?.temperatureF, "°F")} detail={data.current?.description ?? undefined} icon={<CloudSun size={21} />} />
+                <ConditionMetric label="Wind" value={formatValue(data.current?.windMph, " mph")} detail={[data.current?.windDirection, data.current?.windRange ? `${data.current.windRange} mph` : null].filter(Boolean).join(" · ") || undefined} icon={<Wind size={21} />} />
+                <ConditionMetric label="Waves" value={formatValue(data.waves?.heightFt, " ft")} detail={[data.waves?.conditions, data.waves?.periodSeconds ? `${data.waves.periodSeconds}s period` : null].filter(Boolean).join(" · ") || undefined} source={data.waves?.source} icon={<Waves size={21} />} />
+                <ConditionMetric label="Water temperature" value={formatValue(data.water?.temperatureF, "°F")} detail={data.water?.temperatureF == null ? "No nearby NOAA reading" : "Nearby surface reading"} source={data.water?.source} icon={<Thermometer size={21} />} />
                 <ConditionMetric label="Tide" value={data.tide?.phase ?? "Unavailable"} detail={data.tide?.stationName ? `${data.tide.stationName}${data.tide.distanceMiles ? ` · ${data.tide.distanceMiles} mi away` : ""}` : "No nearby NOAA station"} source={data.tide?.source} icon={<Compass size={21} />} />
-                <ConditionMetric label="Rain chance" value={formatValue(data.current.precipitationChance, "%")} detail={data.current.humidity == null ? undefined : `${Math.round(data.current.humidity)}% humidity`} icon={<Umbrella size={21} />} />
+                <ConditionMetric label="Rain chance" value={formatValue(data.current?.precipitationChance, "%")} detail={data.current?.humidity == null ? undefined : `${Math.round(data.current.humidity)}% humidity`} icon={<Umbrella size={21} />} />
                 <ConditionMetric label="Next high" value={formatTideTime(data.tide?.nextHigh?.time)} detail={data.tide?.nextHigh?.heightFt == null ? undefined : `${formatValue(data.tide.nextHigh.heightFt, " ft")} predicted`} icon={<ArrowDownRight size={21} />} />
                 <ConditionMetric label="Next low" value={formatTideTime(data.tide?.nextLow?.time)} detail={data.tide?.nextLow?.heightFt == null ? undefined : `${formatValue(data.tide.nextLow.heightFt, " ft")} predicted`} icon={<ArrowDownRight size={21} />} />
               </div>
@@ -570,18 +571,18 @@ function MarineConditionsPage() {
                 </section>
                 <section className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 lg:p-8">
                   <div className="flex items-center gap-3 text-[hsl(var(--accent))]"><AlertTriangle size={18} /><span className="fine-label">NWS advisories</span></div>
-                  {data.alerts.length ? <div className="mt-5 space-y-4">{data.alerts.slice(0, 3).map((alert, index) => <div key={`${alert.event}-${index}`} className="border-t border-[hsl(var(--border))] pt-4"><p className="text-sm font-bold text-[hsl(var(--primary))]">{alert.event ?? "Active advisory"}</p><p className="mt-1 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">{alert.headline ?? "Check the NWS alert details before departure."}</p></div>)}</div> : <p className="mt-5 text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">No active NWS advisories were reported for this point when the page was fetched.</p>}
+                  {(data.alerts ?? []).length ? <div className="mt-5 space-y-4">{(data.alerts ?? []).slice(0, 3).map((alert, index) => <div key={`${alert.event}-${index}`} className="border-t border-[hsl(var(--border))] pt-4"><p className="text-sm font-bold text-[hsl(var(--primary))]">{alert.event ?? "Active advisory"}</p><p className="mt-1 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">{alert.headline ?? "Check the NWS alert details before departure."}</p></div>)}</div> : <p className="mt-5 text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">No active NWS advisories were reported for this point when the page was fetched.</p>}
                 </section>
               </div>
 
               <section className="mt-12">
                 <div className="mb-6 flex items-end justify-between gap-5 border-b border-[hsl(var(--border))] pb-5"><div><span className="fine-label text-[hsl(var(--accent))]">Seven-day outlook</span><h3 className="display-font mt-2 text-4xl text-[hsl(var(--primary))] md:text-5xl">Plan the next launch.</h3></div><CloudSun className="hidden text-[hsl(var(--accent))] md:block" size={28} /></div>
-                {data.forecast.length ? <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7">{data.forecast.map((period, index) => <div key={`${period.date}-${index}`} className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4"><span className="fine-label text-[hsl(var(--accent))]">{index === 0 ? "Today" : formatForecastDate(period.date)}</span><p className="mt-4 display-font text-3xl text-[hsl(var(--primary))]">{formatValue(period.temperatureF, "°")}</p><p className="mt-2 min-h-10 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">{period.shortForecast ?? "Forecast unavailable"}</p><p className="mt-4 border-t border-[hsl(var(--border))] pt-3 text-xs text-[hsl(var(--muted-foreground))]">{period.windDirection ?? "Wind"} {period.windSpeed?.range ?? (period.windSpeed?.value != null ? `${Math.round(period.windSpeed.value)} mph` : "—")}</p><p className="mt-2 text-xs text-[hsl(var(--muted-foreground))]">{period.precipitationChance == null ? "Rain —" : `Rain ${Math.round(period.precipitationChance)}%`}</p></div>)}</div> : <p className="rounded-xl border border-dashed border-[hsl(var(--border))] p-6 text-sm text-[hsl(var(--muted-foreground))]">The seven-day forecast is not available for this location right now.</p>}
+                {(data.forecast ?? []).length ? <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7">{(data.forecast ?? []).map((period, index) => <div key={`${period.date}-${index}`} className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4"><span className="fine-label text-[hsl(var(--accent))]">{index === 0 ? "Today" : formatForecastDate(period.date)}</span><p className="mt-4 display-font text-3xl text-[hsl(var(--primary))]">{formatValue(period.temperatureF, "°")}</p><p className="mt-2 min-h-10 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">{period.shortForecast ?? "Forecast unavailable"}</p><p className="mt-4 border-t border-[hsl(var(--border))] pt-3 text-xs text-[hsl(var(--muted-foreground))]">{period.windDirection ?? "Wind"} {period.windSpeed?.range ?? (period.windSpeed?.value != null ? `${Math.round(period.windSpeed.value)} mph` : "—")}</p><p className="mt-2 text-xs text-[hsl(var(--muted-foreground))]">{period.precipitationChance == null ? "Rain —" : `Rain ${Math.round(period.precipitationChance)}%`}</p></div>)}</div> : <p className="rounded-xl border border-dashed border-[hsl(var(--border))] p-6 text-sm text-[hsl(var(--muted-foreground))]">The seven-day forecast is not available for this location right now.</p>}
               </section>
 
               <section className="mt-12 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))] p-6 lg:p-8">
                 <div className="flex items-center gap-3 text-[hsl(var(--accent))]"><Sparkles size={17} /><span className="fine-label">Live data sources</span></div>
-                <div className="mt-5 grid gap-4 md:grid-cols-3">{data.sources.map((source) => <a key={source.name} href={source.url} target="_blank" rel="noreferrer" className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 transition hover:-translate-y-0.5 hover:border-[hsl(var(--accent))]"><p className="text-sm font-bold text-[hsl(var(--primary))]">{source.name}</p><p className="mt-2 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">{source.note}</p></a>)}</div>
+                <div className="mt-5 grid gap-4 md:grid-cols-3">{(data.sources ?? []).map((source) => <a key={source.name} href={source.url} target="_blank" rel="noreferrer" className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 transition hover:-translate-y-0.5 hover:border-[hsl(var(--accent))]"><p className="text-sm font-bold text-[hsl(var(--primary))]">{source.name}</p><p className="mt-2 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">{source.note}</p></a>)}</div>
                  <p className="mt-6 text-xs leading-relaxed text-[hsl(var(--muted-foreground))]">Lyman Marine requests fresh readings when this page opens and refreshes them automatically while the page is open. No private API key is required for these public U.S. sources. Tide, water-temperature, and wave coverage varies by location; unavailable readings are shown rather than estimated.</p>
               </section>
             </>
@@ -996,11 +997,23 @@ function ReviewShelf() {
 function Newsletter() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (email.includes('@')) {
+      setIsSubmitting(true);
+      await subscribeNewsletter(email, 'footer_tide_report');
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }
+  };
+
   return (
     <section id="community" className="bg-[hsl(var(--accent))] py-16 text-[hsl(var(--accent-foreground))] lg:py-20">
       <div className="mx-auto grid max-w-[1320px] items-center gap-8 px-5 md:grid-cols-[1.1fr_.9fr] lg:px-10">
         <div><div className="flex items-center gap-3"><Waves size={19} /><span className="fine-label">The Lyman tide report</span></div><h2 className="display-font mt-4 max-w-xl text-4xl leading-[.96] tracking-[-.03em] md:text-5xl">Get practical boating advice each Friday.</h2><p className="mt-4 max-w-lg text-sm leading-relaxed text-white/75">One useful story, one piece of gear, and one boating destination delivered to your inbox.</p></div>
-        <div>{submitted ? <div className="rounded-2xl border border-white/35 bg-white/10 p-6"><Check size={22} /><h3 className="display-font mt-4 text-2xl">You're on the list.</h3><p className="mt-2 text-sm text-white/75">We'll meet you in your inbox this Friday.</p></div> : <form onSubmit={(event) => { event.preventDefault(); if (email.includes('@')) setSubmitted(true); }} className="rounded-2xl bg-[hsl(var(--primary))] p-3 shadow-[var(--shadow-lift)]"><label htmlFor="newsletter-email" className="sr-only">Email address</label><div className="flex gap-2"><input data-testid="input-newsletter-email" id="newsletter-email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Your email address" className="min-w-0 flex-1 rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/45 focus:ring-2 focus:ring-[hsl(var(--accent))]" /><button data-testid="button-newsletter-submit" className="rounded-xl bg-[hsl(var(--accent))] px-4 py-3 text-sm font-bold text-white transition hover:brightness-110">Subscribe</button></div><p className="px-2 pt-3 text-[10px] text-white/45">No noise. Unsubscribe anytime. We respect your wake.</p></form>}</div>
+        <div>{submitted ? <div className="rounded-2xl border border-white/35 bg-white/10 p-6"><Check size={22} /><h3 className="display-font mt-4 text-2xl">You're on the list.</h3><p className="mt-2 text-sm text-white/75">We'll meet you in your inbox this Friday.</p></div> : <form onSubmit={handleSubmit} className="rounded-2xl bg-[hsl(var(--primary))] p-3 shadow-[var(--shadow-lift)]"><label htmlFor="newsletter-email" className="sr-only">Email address</label><div className="flex gap-2"><input data-testid="input-newsletter-email" id="newsletter-email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Your email address" disabled={isSubmitting} className="min-w-0 flex-1 rounded-xl bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/45 focus:ring-2 focus:ring-[hsl(var(--accent))]" /><button data-testid="button-newsletter-submit" disabled={isSubmitting} className="rounded-xl bg-[hsl(var(--accent))] px-4 py-3 text-sm font-bold text-white transition hover:brightness-110 disabled:opacity-50">{isSubmitting ? 'Joining...' : 'Subscribe'}</button></div><p className="px-2 pt-3 text-[10px] text-white/45">No noise. Unsubscribe anytime. We respect your wake.</p></form>}</div>
       </div>
     </section>
   );

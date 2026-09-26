@@ -1,0 +1,49 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Test connection document for app initialization health check
+    match /test/{docId} {
+      allow read: if true;
+    }
+
+    // Community boat stories
+    match /stories/{storyId} {
+      // Anyone can read published stories; authenticated users/admins can read all (including pending)
+      allow read: if resource == null || resource.data.status == 'published' || request.auth != null;
+
+      // Anyone can submit a story, but it MUST be submitted with status == 'pending'
+      allow create: if request.resource.data.status == 'pending'
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0
+        && request.resource.data.title.size() <= 150
+        && request.resource.data.author is string
+        && request.resource.data.author.size() > 0
+        && request.resource.data.author.size() <= 80
+        && request.resource.data.location is string
+        && (request.resource.data.story is string || request.resource.data.fullStory is string);
+
+      // Allow public users to increment 'likes' on published stories
+      // Allow authenticated editors/admins full update and delete rights
+      allow update: if (
+        resource.data.status == 'published'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes'])
+        && request.resource.data.likes == resource.data.likes + 1
+      ) || request.auth != null;
+
+      allow delete: if request.auth != null;
+    }
+
+    // Newsletter Subscribers
+    match /subscribers/{subscriberId} {
+      // Anyone can subscribe their email
+      allow create: if request.resource.data.email is string
+        && request.resource.data.email.size() > 3
+        && request.resource.data.email.size() <= 150
+        && request.resource.data.createdAt is string;
+
+      // Only authenticated admin can view, modify, or export the subscriber list
+      allow read, update, delete: if request.auth != null;
+    }
+  }
+}

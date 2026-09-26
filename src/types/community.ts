@@ -23,4 +23,12 @@ export interface CommunityStory {
   email?: string;
   status: 'published' | 'pending' | 'rejected';
   submittedAt: string;
+  likes?: number;
+}
+
+export interface Subscriber {
+  id: string;
+  email: string;
+  createdAt: string;
+  source?: string;
 }

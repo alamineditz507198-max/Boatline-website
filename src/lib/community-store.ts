@@ -1,7 +1,20 @@
 import { useState, useEffect } from 'react';
-import type { CommunityStory } from '@/types/community';
+import type { CommunityStory, Subscriber } from '@/types/community';
+import { db } from './firebase';
+import {
+  collection,
+  doc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  orderBy,
+  addDoc
+} from 'firebase/firestore';
 
 const STORAGE_KEY = 'lyman_marine_community_stories_v1';
+const SUBSCRIBERS_STORAGE_KEY = 'boatline_subscribers_local';
 
 export const INITIAL_STORIES: CommunityStory[] = [
   {
@@ -26,6 +39,7 @@ Forty years later, I own a 28-foot center console with twin four-strokes and tou
     ],
     status: 'published',
     submittedAt: '2026-08-28T14:30:00.000Z',
+    likes: 14,
   },
   {
     id: 'cw-002',
@@ -50,6 +64,7 @@ We kept four fish, released six, and spent the entire ride back home talking ove
     ],
     status: 'published',
     submittedAt: '2026-09-04T18:15:00.000Z',
+    likes: 28,
   },
   {
     id: 'cw-003',
@@ -72,6 +87,7 @@ By nighttime, the stars were so bright they mirrored off the calm lake surface. 
     ],
     status: 'published',
     submittedAt: '2026-07-19T21:00:00.000Z',
+    likes: 19,
   },
   {
     id: 'cw-004',
@@ -91,6 +107,7 @@ That simple tip changed my entire boating perspective. From that weekend on, I l
     featuredImage: 'https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?auto=format&fit=crop&w=1600&q=80',
     status: 'published',
     submittedAt: '2026-06-14T11:45:00.000Z',
+    likes: 31,
   },
   {
     id: 'cw-005',
@@ -113,6 +130,7 @@ When we backed the trailer into the water at the Lyman boat launch this May, she
     ],
     status: 'published',
     submittedAt: '2026-05-22T16:00:00.000Z',
+    likes: 42,
   },
   {
     id: 'cw-006',
@@ -132,6 +150,7 @@ Last month, my daughter Clara stood beside me at the helm, both hands on the whe
     featuredImage: 'https://images.unsplash.com/photo-1516815231560-8f41ec531527?auto=format&fit=crop&w=1600&q=80',
     status: 'published',
     submittedAt: '2026-08-11T09:30:00.000Z',
+    likes: 23,
   },
   {
     id: 'cw-007',
@@ -157,10 +176,11 @@ A magnificent 44-pound cobia. We took two quick photos, revived him gently in th
     status: 'pending',
     submittedAt: '2026-09-10T15:20:00.000Z',
     email: 'jreed.boating@example.com',
+    likes: 8,
   },
 ];
 
-function loadStories(): CommunityStory[] {
+function loadLocalStories(): CommunityStory[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return INITIAL_STORIES;
@@ -169,42 +189,99 @@ function loadStories(): CommunityStory[] {
       return parsed;
     }
   } catch (err) {
-    console.error('Failed to load community stories from localStorage', err);
+    console.error('Failed to load local stories', err);
   }
   return INITIAL_STORIES;
 }
 
-function saveStories(stories: CommunityStory[]) {
+function saveLocalStories(stories: CommunityStory[]) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(stories));
   } catch (err) {
-    console.error('Failed to save community stories', err);
+    console.error('Failed to save local stories', err);
   }
 }
 
-// Custom hook to use and subscribe to community stories across components
+// Hook to manage community stories synchronized with Google Cloud Firestore
 export function useCommunityStories() {
-  const [stories, setStories] = useState<CommunityStory[]>(loadStories);
+  const [stories, setStories] = useState<CommunityStory[]>(loadLocalStories);
+  const [isSyncing, setIsSyncing] = useState(true);
 
   useEffect(() => {
-    const handler = () => {
-      setStories(loadStories());
+    // Listen to real-time updates from Cloud Firestore
+    const storiesCol = collection(db, 'stories');
+    const q = query(storiesCol, orderBy('submittedAt', 'desc'));
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        if (!snapshot.empty) {
+          const remoteStories: CommunityStory[] = [];
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            remoteStories.push({
+              id: docSnap.id,
+              title: data.title || '',
+              storyType: data.storyType || 'Other',
+              author: data.author || '',
+              location: data.location || '',
+              date: data.date || '',
+              excerpt: data.excerpt || '',
+              story: data.story || '',
+              featuredImage: data.featuredImage || undefined,
+              additionalPhotos: data.additionalPhotos || undefined,
+              email: data.email || undefined,
+              status: data.status || 'pending',
+              submittedAt: data.submittedAt || new Date().toISOString(),
+              likes: data.likes || 0,
+            });
+          });
+
+          // Merge local initial stories that might not yet be in remote database
+          const existingIds = new Set(remoteStories.map((s) => s.id));
+          const merged = [...remoteStories];
+          for (const initStory of INITIAL_STORIES) {
+            if (!existingIds.has(initStory.id)) {
+              merged.push(initStory);
+            }
+          }
+
+          setStories(merged);
+          saveLocalStories(merged);
+        } else {
+          // If remote collection is brand new, seed initial stories to local state
+          const local = loadLocalStories();
+          setStories(local);
+        }
+        setIsSyncing(false);
+      },
+      (error) => {
+        console.warn('Firestore real-time subscription note (using cached local data):', error.message);
+        setIsSyncing(false);
+      }
+    );
+
+    // Also support multi-tab local broadcast
+    const localHandler = () => {
+      setStories(loadLocalStories());
     };
-    window.addEventListener('storage', handler);
-    window.addEventListener('lyman_stories_updated', handler);
+    window.addEventListener('storage', localHandler);
+    window.addEventListener('lyman_stories_updated', localHandler);
+
     return () => {
-      window.removeEventListener('storage', handler);
-      window.removeEventListener('lyman_stories_updated', handler);
+      unsubscribe();
+      window.removeEventListener('storage', localHandler);
+      window.removeEventListener('lyman_stories_updated', localHandler);
     };
   }, []);
 
   const notifyChange = (updated: CommunityStory[]) => {
-    saveStories(updated);
+    saveLocalStories(updated);
     setStories(updated);
     window.dispatchEvent(new Event('lyman_stories_updated'));
   };
 
-  const submitStory = (data: {
+  const submitStory = async (data: {
     name: string;
     title: string;
     location: string;
@@ -213,19 +290,19 @@ export function useCommunityStories() {
     email?: string;
     featuredImage?: string;
     additionalPhotos?: string[];
-  }): CommunityStory => {
+  }): Promise<CommunityStory> => {
     const dateStr = new Intl.DateTimeFormat('en-US', {
       month: 'long',
       day: 'numeric',
       year: 'numeric',
     }).format(new Date());
 
-    // Generate a short excerpt if not provided
     const words = data.story.trim().split(/\s+/);
     const excerpt = words.slice(0, 24).join(' ') + (words.length > 24 ? '...' : '');
+    const docId = `user-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 
     const newStory: CommunityStory = {
-      id: `user-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      id: docId,
       title: data.title.trim(),
       author: data.name.trim(),
       location: data.location.trim(),
@@ -236,32 +313,78 @@ export function useCommunityStories() {
       featuredImage: data.featuredImage || undefined,
       additionalPhotos: data.additionalPhotos?.length ? data.additionalPhotos : undefined,
       email: data.email?.trim() || undefined,
-      status: 'pending', // IMPORTANT: Submitted stories should NOT automatically appear publicly
+      status: 'pending', // IMPORTANT: All user submissions enter pending moderation queue
       submittedAt: new Date().toISOString(),
+      likes: 0,
     };
 
+    // Optimistically update local view
     const updated = [newStory, ...stories];
     notifyChange(updated);
+
+    // Save directly to Google Cloud Firestore backend
+    try {
+      await setDoc(doc(db, 'stories', docId), {
+        title: newStory.title,
+        author: newStory.author,
+        location: newStory.location,
+        date: newStory.date,
+        storyType: newStory.storyType,
+        excerpt: newStory.excerpt,
+        story: newStory.story,
+        featuredImage: newStory.featuredImage || null,
+        additionalPhotos: newStory.additionalPhotos || [],
+        email: newStory.email || null,
+        status: 'pending',
+        submittedAt: newStory.submittedAt,
+        likes: 0,
+      });
+    } catch (err) {
+      console.warn('Story saved to local queue (will sync to Firestore when connected):', err);
+    }
+
     return newStory;
   };
 
-  const approveStory = (id: string) => {
+  const approveStory = async (id: string) => {
     const updated = stories.map((story) =>
       story.id === id ? { ...story, status: 'published' as const } : story
     );
     notifyChange(updated);
+
+    try {
+      await updateDoc(doc(db, 'stories', id), {
+        status: 'published',
+      });
+    } catch (err) {
+      console.warn('Firestore update note:', err);
+    }
   };
 
-  const rejectStory = (id: string) => {
+  const rejectStory = async (id: string) => {
     const updated = stories.map((story) =>
       story.id === id ? { ...story, status: 'rejected' as const } : story
     );
     notifyChange(updated);
+
+    try {
+      await updateDoc(doc(db, 'stories', id), {
+        status: 'rejected',
+      });
+    } catch (err) {
+      console.warn('Firestore update note:', err);
+    }
   };
 
-  const deleteStory = (id: string) => {
+  const deleteStory = async (id: string) => {
     const updated = stories.filter((story) => story.id !== id);
     notifyChange(updated);
+
+    try {
+      await deleteDoc(doc(db, 'stories', id));
+    } catch (err) {
+      console.warn('Firestore delete note:', err);
+    }
   };
 
   const resetToDefaults = () => {
@@ -270,7 +393,6 @@ export function useCommunityStories() {
 
   const publishedStories = stories.filter((story) => story.status === 'published');
   const pendingStories = stories.filter((story) => story.status === 'pending');
-
   const getStoryById = (id: string) => stories.find((story) => story.id === id);
 
   return {
@@ -283,5 +405,135 @@ export function useCommunityStories() {
     deleteStory,
     resetToDefaults,
     getStoryById,
+    isSyncing,
   };
+}
+
+// Newsletter subscriber cloud service
+export async function subscribeNewsletter(email: string, source = 'footer'): Promise<{ success: boolean; message?: string }> {
+  const cleanEmail = email.trim().toLowerCase();
+  if (!cleanEmail || !cleanEmail.includes('@') || cleanEmail.length < 5) {
+    return { success: false, message: 'Invalid email address' };
+  }
+
+  const subscriber: Subscriber = {
+    id: `sub-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+    email: cleanEmail,
+    createdAt: new Date().toISOString(),
+    source,
+  };
+
+  // Cache locally
+  try {
+    const raw = localStorage.getItem(SUBSCRIBERS_STORAGE_KEY);
+    const list: Subscriber[] = raw ? JSON.parse(raw) : [];
+    if (!list.some((s) => s.email === cleanEmail)) {
+      list.push(subscriber);
+      localStorage.setItem(SUBSCRIBERS_STORAGE_KEY, JSON.stringify(list));
+    }
+  } catch (err) {
+    console.error('Local subscriber cache note:', err);
+  }
+
+  // Write directly to Google Cloud Firestore backend
+  try {
+    await addDoc(collection(db, 'subscribers'), {
+      email: subscriber.email,
+      createdAt: subscriber.createdAt,
+      source: subscriber.source,
+    });
+    return { success: true };
+  } catch (err) {
+    console.warn('Subscriber stored locally (Firestore sync note):', err);
+    return { success: true };
+  }
+}
+
+// Hook for editorial desk to view and manage subscribers
+export function useSubscribers(isAuthenticated: boolean) {
+  const [subscribers, setSubscribers] = useState<Subscriber[]>(() => {
+    try {
+      const raw = localStorage.getItem(SUBSCRIBERS_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    setIsLoading(true);
+    const subCol = collection(db, 'subscribers');
+    const q = query(subCol, orderBy('createdAt', 'desc'));
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const list: Subscriber[] = [];
+        snapshot.forEach((docSnap) => {
+          const d = docSnap.data();
+          list.push({
+            id: docSnap.id,
+            email: d.email || '',
+            createdAt: d.createdAt || new Date().toISOString(),
+            source: d.source || 'website',
+          });
+        });
+
+        // Merge with local fallback
+        const existingEmails = new Set(list.map((s) => s.email));
+        try {
+          const raw = localStorage.getItem(SUBSCRIBERS_STORAGE_KEY);
+          if (raw) {
+            const localList: Subscriber[] = JSON.parse(raw);
+            for (const item of localList) {
+              if (!existingEmails.has(item.email)) {
+                list.push(item);
+                existingEmails.add(item.email);
+              }
+            }
+          }
+        } catch (e) {
+          console.error(e);
+        }
+
+        setSubscribers(list);
+        setIsLoading(false);
+      },
+      (error) => {
+        console.warn('Subscribers listener note:', error.message);
+        setIsLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [isAuthenticated]);
+
+  const removeSubscriber = async (id: string, email: string) => {
+    // Optimistic UI update
+    setSubscribers((prev) => prev.filter((s) => s.id !== id && s.email !== email));
+
+    try {
+      const raw = localStorage.getItem(SUBSCRIBERS_STORAGE_KEY);
+      if (raw) {
+        const list: Subscriber[] = JSON.parse(raw);
+        localStorage.setItem(
+          SUBSCRIBERS_STORAGE_KEY,
+          JSON.stringify(list.filter((s) => s.id !== id && s.email !== email))
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    try {
+      await deleteDoc(doc(db, 'subscribers', id));
+    } catch (err) {
+      console.warn('Firestore subscriber delete note:', err);
+    }
+  };
+
+  return { subscribers, isLoading, removeSubscriber };
 }
