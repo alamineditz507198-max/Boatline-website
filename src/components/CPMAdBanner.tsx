@@ -11,7 +11,7 @@ export function CPMAdBanner({ className = '' }: CPMAdBannerProps) {
     const container = containerRef.current;
     if (!container) return;
 
-    // Clear previous scripts if any to allow fresh execution
+    // Check if script has already been added to this container
     const existingScript = container.querySelector(
       'script[src*="profitableratecpmnetwork.com"]'
     );
@@ -30,18 +30,21 @@ export function CPMAdBanner({ className = '' }: CPMAdBannerProps) {
   return (
     <aside
       aria-label="Advertisement Banner"
-      className={`w-full border-b border-[hsl(var(--border))] bg-[hsl(var(--card))]/50 py-2 px-3 text-center ${className}`}
+      className={`my-8 overflow-hidden rounded-2xl border border-[hsl(var(--card-border))] bg-[hsl(var(--card))] p-3 sm:p-5 text-center shadow-sm ${className}`}
     >
-      <div className="mx-auto flex max-w-[1320px] flex-col items-center justify-center">
+      <div className="mx-auto flex max-w-[728px] flex-col items-center justify-center">
         {/* Subtle Ad label */}
-        <span className="mb-1 text-[9px] font-semibold uppercase tracking-widest text-[hsl(var(--muted-foreground))]/70">
-          Advertisement
-        </span>
+        <div className="mb-2 flex items-center justify-center gap-1.5 opacity-60">
+          <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--accent))]" />
+          <span className="text-[9px] font-semibold uppercase tracking-widest text-[hsl(var(--muted-foreground))]">
+            Advertisement
+          </span>
+        </div>
 
         {/* Dynamic Adsterra / CPM Network Container */}
         <div
           ref={containerRef}
-          className="flex min-h-[60px] w-full max-w-[728px] items-center justify-center overflow-hidden"
+          className="flex min-h-[60px] w-full max-w-[728px] items-center justify-center overflow-hidden rounded-lg bg-[hsl(var(--muted))]/20"
         >
           <div
             id="container-62fabac9f34c7be0cccc5f35c934bfb3"

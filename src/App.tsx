@@ -1102,7 +1102,6 @@ function Home() {
       <Hero onSearch={() => setSearchOpen(true)} />
       <TopicRail />
       <EditionStrip />
-      <CPMAdBanner />
       <main>
         <LatestStories saved={saved} onSave={toggleSave} />
         <GuideSpotlight />
