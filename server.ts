@@ -13,6 +13,13 @@ async function startServer() {
     res.json({ status: "ok" });
   });
 
+  // Dedicated ads.txt endpoint for Google AdSense crawler
+  app.get("/ads.txt", (_req, res) => {
+    res.setHeader("Content-Type", "text/plain");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.send("google.com, pub-9043483767704653, DIRECT, f08c47fec0942fa0\n");
+  });
+
   // Marine conditions and NOAA/NWS API routes
   app.use("/api", marineConditionsRouter);
 

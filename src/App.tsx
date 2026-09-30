@@ -50,6 +50,7 @@ import { UsedBoatBuyingGuideArticle } from '@/components/UsedBoatBuyingGuideArti
 import { ReadTheWaterArticle } from '@/components/ReadTheWaterArticle';
 import { BoatlineBoatLogo } from '@/components/BoatlineBoatLogo';
 import { AdSenseSlot } from '@/components/AdSenseSlot';
+import { CPMAdBanner } from '@/components/CPMAdBanner';
 import { MarketplaceApp } from '@/marketplace/MarketplaceApp';
 import { subscribeNewsletter } from '@/lib/community-store';
 
@@ -1101,11 +1102,9 @@ function Home() {
       <Hero onSearch={() => setSearchOpen(true)} />
       <TopicRail />
       <EditionStrip />
+      <CPMAdBanner />
       <main>
         <LatestStories saved={saved} onSave={toggleSave} />
-        <div className="mx-auto max-w-[1320px] px-5 lg:px-10">
-          <AdSenseSlot slotId="1733624695" />
-        </div>
         <GuideSpotlight />
         <FieldNotes />
         <MagazineMosaic />
